@@ -1,0 +1,1 @@
+export { ShSearchBar } from './ShSearchBar';

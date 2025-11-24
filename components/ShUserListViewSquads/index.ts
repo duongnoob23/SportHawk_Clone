@@ -1,0 +1,1 @@
+export { ShUserListViewSquads } from './ShUserListViewSquads';

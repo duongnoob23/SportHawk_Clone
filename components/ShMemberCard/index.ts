@@ -1,0 +1,1 @@
+export { ShMemberCard } from './ShMemberCard';

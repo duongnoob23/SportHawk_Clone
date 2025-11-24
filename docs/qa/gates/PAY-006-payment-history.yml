@@ -1,0 +1,77 @@
+schema: 1
+story: 'PAY-006'
+story_title: 'Payment History (Member)'
+gate: CONCERNS
+status_reason: 'Critical API implementation inconsistencies in development guide must be fixed before development'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-01-08T10:00:00Z'
+
+top_issues:
+  - severity: high
+    category: documentation
+    issue: 'Development guide contains incorrect API object name (paymentApi vs paymentsApi)'
+    refs:
+      [
+        'docs/stories/PAY-006-development-guide.md:48',
+        'docs/stories/PAY-006-development-guide.md:150',
+      ]
+    suggested_owner: po
+  - severity: high
+    category: documentation
+    issue: 'Incorrect field name in query (member_id vs user_id)'
+    refs: ['docs/stories/PAY-006-development-guide.md:71']
+    suggested_owner: po
+  - severity: medium
+    category: documentation
+    issue: 'Missing .limit(50) in first API example'
+    refs: ['docs/stories/PAY-006-development-guide.md:73']
+    suggested_owner: po
+  - severity: medium
+    category: documentation
+    issue: 'Missing logger import in Step 1 code example'
+    refs: ['docs/stories/PAY-006-development-guide.md:45']
+    suggested_owner: po
+
+waiver: { active: false }
+
+quality_score: 60 # 100 - (20*0 FAILs) - (10*4 CONCERNS)
+expires: '2025-01-22T10:00:00Z'
+
+evidence:
+  tests_reviewed: 0 # No implementation yet
+  risks_identified: 2
+  trace:
+    ac_covered: [] # No tests implemented yet
+    ac_gaps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] # All ACs pending implementation
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'Read-only implementation with proper user isolation'
+  performance:
+    status: PASS
+    notes: '50-item limit prevents performance issues, FlatList for efficient rendering'
+  reliability:
+    status: CONCERNS
+    notes: 'Missing error boundary patterns and timeout handling examples'
+  maintainability:
+    status: CONCERNS
+    notes: 'Inconsistent API examples will confuse developers'
+
+recommendations:
+  immediate: # Must fix before development
+    - action: 'Fix API object name to paymentsApi throughout development guide'
+      refs: ['docs/stories/PAY-006-development-guide.md:48,150']
+    - action: 'Change member_id to user_id in query'
+      refs: ['docs/stories/PAY-006-development-guide.md:71']
+    - action: 'Add .limit(50) to first query example'
+      refs: ['docs/stories/PAY-006-development-guide.md:73']
+    - action: 'Add logger import to Step 1'
+      refs: ['docs/stories/PAY-006-development-guide.md:45']
+  future: # Can be addressed during development
+    - action: 'Add error boundary example for payment detail screen'
+      refs: ['docs/stories/PAY-006-development-guide.md']
+    - action: 'Include network timeout handling patterns'
+      refs: ['docs/stories/PAY-006-development-guide.md']
+    - action: 'Add test scenarios for concurrent operations'
+      refs: ['docs/stories/PAY-006-payment-history.md']

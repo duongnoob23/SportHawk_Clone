@@ -1,0 +1,1 @@
+export { ShConfirmDialog } from './ShConfirmDialog';

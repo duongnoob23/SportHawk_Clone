@@ -1,0 +1,1 @@
+export { ShTabsWithAction } from './ShTabsWithAction';

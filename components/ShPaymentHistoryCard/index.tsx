@@ -1,0 +1,1 @@
+export { ShPaymentHistoryCard } from './ShPaymentHistoryCard';

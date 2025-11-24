@@ -1,0 +1,1 @@
+export { ShTeamPreviewSection } from './ShTeamPreviewSection';

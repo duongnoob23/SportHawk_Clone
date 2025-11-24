@@ -1,0 +1,1 @@
+export { ShOTPInput } from './ShOTPInput';

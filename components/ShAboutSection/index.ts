@@ -1,0 +1,1 @@
+export { ShAboutSection } from './ShAboutSection';

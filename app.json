@@ -1,0 +1,74 @@
+{
+  "expo": {
+    "name": "SportHawk",
+    "slug": "sporthawkmvpv4",
+    "scheme": "sporthawk",
+    "version": "1.0.2",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "contentFit": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.sporthawk.sporthawkmvpv4",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
+      },
+      "entitlements": {
+        "aps-environment": "production"
+      },
+      "googleServicesFile": "./constants/keys/GoogleService-Info.plist"
+    },
+    "android": {
+      "package": "com.sporthawk.mvp_v4",
+      "versionCode": 3,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon-square3.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "googleServicesFile": "./constants/keys/google-services.json",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-video",
+      [
+        "react-native-maps",
+        {
+          "iosGoogleMapsApiKey": "AIzaSyAy4-6kdoixUBA__Qa2yjH4iX6k21btm74",
+          "androidGoogleMapsApiKey": "AIzaSyAy4-6kdoixUBA__Qa2yjH4iX6k21btm74"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "forceStaticLinking": ["RNFBApp"]
+          }
+        }
+      ],
+      "expo-secure-store",
+      "expo-notifications",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c6c282ae-91d0-4457-a081-4728123642f8"
+      }
+    },
+    "owner": "sporthawk"
+  }
+}

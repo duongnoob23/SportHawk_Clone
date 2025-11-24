@@ -1,0 +1,27 @@
+export type TeamType = {
+  id: string;
+  clubId: string;
+  name: string;
+  teamType: string;
+  sport: string;
+  leagueName: string;
+  teamLevel: string;
+  teamSort: string;
+  ageGroup: string;
+  homeGround: string;
+  homeGroundAddress: string;
+  homeGroundLatitude: number;
+  homeGroundLongitude: number;
+  foundedYear: number;
+  motto: string;
+  teamPhotoUrl: string;
+  trainingDay1: string;
+  trainingTime1: string;
+  trainingDay2: string | null;
+  trainingTime2: string | null;
+  matchDay: string;
+  matchTime: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};

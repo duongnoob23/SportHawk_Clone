@@ -1,0 +1,1 @@
+export { ShTeamStatsInfo } from './ShTeamStatsInfo';

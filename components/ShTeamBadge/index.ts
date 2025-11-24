@@ -1,0 +1,1 @@
+export { ShTeamBadge } from './ShTeamBadge';

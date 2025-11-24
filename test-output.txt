@@ -1,0 +1,1517 @@
+﻿node.exe : npm warn Unknown cli config "--coverage". This will stop working in 
+the next major version of npm.
+At C:\nvm4w\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm warn Unknow...version of npm. 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+> sporthawk_mvp_v4@1.0.0 test
+> jest --verbose tests/event
+
+FAIL tests/event/updateEventById.test.ts (26.357 s)
+  updateEventById API
+    ΓêÜ updateEventById_WhenValidInput_ReturnsSuccess (60 ms)
+    ΓêÜ updateEventById_WhenEventIdIsNull_ReturnsFailure (166 ms)
+    ΓêÜ updateEventById_WhenEventIdIsEmpty_ReturnsFailure (2 ms)
+    ΓêÜ updateEventById_WhenEventNotFound_ReturnsFailure (3 ms)
+    ΓêÜ updateEventById_WhenAdminIdIsNull_ReturnsFailure (7 ms)
+    ΓêÜ updateEventById_WhenAddMembers_InsertsInvitations (7 ms)
+    ΓêÜ updateEventById_WhenRemoveMembers_DeletesInvitations (47 ms)
+    ΓêÜ updateEventById_WhenUpdateEvent_UpdatesEventFields (3 ms)
+    ΓêÜ updateEventById_WhenDatabaseError_ReturnsFailure (2 ms)
+    ΓêÜ updateEventById_WhenInsertInvitationsError_ReturnsFailure (2 ms)
+    ΓêÜ updateEventById_WhenDeleteInvitationsError_ReturnsFailure (9 ms)
+    ΓêÜ updateEventById_WhenHomeMatch_GeneratesCorrectTitle (11 ms)
+    ΓêÜ updateEventById_WhenAwayMatch_GeneratesCorrectTitle (3 ms)
+    ΓêÜ updateEventById_WhenTraining_GeneratesCorrectTitle (1 ms)
+    ΓêÜ updateEventById_WhenOther_GeneratesCorrectTitle (3 ms)
+    ├ù updateEventById_WhenEndTimeEqualsStartTime_ShouldFail (92 ms)
+    ├ù updateEventById_WhenEndTimeBeforeStartTime_ShouldFail (12 ms)
+    ├ù updateEventById_WhenTitleIsTooLong_ShouldFail (4 ms)
+    ├ù updateEventById_WhenLocationNameIsTooLong_ShouldFail (3 ms)
+    ├ù updateEventById_WhenOpponentIsTooLong_ShouldFail (42 ms)
+
+  ΓùÅ updateEventById API ΓÇ║ 
+updateEventById_WhenEndTimeEqualsStartTime_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "23514",
+    -   "message": StringContaining "events_end_after_start",
+    - }
+    + [TypeError: supabase_1.supabase.from(...).insert is not a function]
+
+    [0m [90m 1180 |[39m         removeArray[33m:[39m [][33m,[39m
+     [90m 1181 |[39m       })
+    [31m[1m>[22m[39m[90m 1182 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m      |[39m               [31m[1m^[22m[39m
+     [90m 1183 |[39m       message[33m:[39m expect[33m.[39mstringContaini
+ng([32m'events_end_after_start'[39m)[33m,[39m
+     [90m 1184 |[39m       code[33m:[39m [32m'23514'[39m[33m,[39m
+     [90m 1185 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (tests/event/updateEventById.test.ts:1182:15)
+
+  ΓùÅ updateEventById API ΓÇ║ 
+updateEventById_WhenEndTimeBeforeStartTime_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "23514",
+    -   "message": StringContaining "events_end_after_start",
+    - }
+    + [TypeError: supabase_1.supabase.from(...).insert is not a function]
+
+    [0m [90m 1230 |[39m         removeArray[33m:[39m [][33m,[39m
+     [90m 1231 |[39m       })
+    [31m[1m>[22m[39m[90m 1232 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m      |[39m               [31m[1m^[22m[39m
+     [90m 1233 |[39m       message[33m:[39m expect[33m.[39mstringContaini
+ng([32m'events_end_after_start'[39m)[33m,[39m
+     [90m 1234 |[39m       code[33m:[39m [32m'23514'[39m[33m,[39m
+     [90m 1235 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (tests/event/updateEventById.test.ts:1232:15)
+
+  ΓùÅ updateEventById API ΓÇ║ updateEventById_WhenTitleIsTooLong_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "22001",
+    -   "message": StringContaining "too long",
+    - }
+    + [TypeError: supabase_1.supabase.from(...).insert is not a function]
+
+    [0m [90m 1277 |[39m         removeArray[33m:[39m [][33m,[39m
+     [90m 1278 |[39m       })
+    [31m[1m>[22m[39m[90m 1279 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m      |[39m               [31m[1m^[22m[39m
+     [90m 1280 |[39m       message[33m:[39m 
+expect[33m.[39mstringContaining([32m'too long'[39m)[33m,[39m
+     [90m 1281 |[39m       code[33m:[39m [32m'22001'[39m[33m,[39m
+     [90m 1282 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (tests/event/updateEventById.test.ts:1279:15)
+
+  ΓùÅ updateEventById API ΓÇ║ 
+updateEventById_WhenLocationNameIsTooLong_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "22001",
+    -   "message": StringContaining "too long",
+    - }
+    + [TypeError: supabase_1.supabase.from(...).insert is not a function]
+
+    [0m [90m 1324 |[39m         removeArray[33m:[39m [][33m,[39m
+     [90m 1325 |[39m       })
+    [31m[1m>[22m[39m[90m 1326 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m      |[39m               [31m[1m^[22m[39m
+     [90m 1327 |[39m       message[33m:[39m 
+expect[33m.[39mstringContaining([32m'too long'[39m)[33m,[39m
+     [90m 1328 |[39m       code[33m:[39m [32m'22001'[39m[33m,[39m
+     [90m 1329 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (tests/event/updateEventById.test.ts:1326:15)
+
+  ΓùÅ updateEventById API ΓÇ║ updateEventById_WhenOpponentIsTooLong_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "22001",
+    -   "message": StringContaining "too long",
+    - }
+    + [TypeError: supabase_1.supabase.from(...).insert is not a function]
+
+    [0m [90m 1371 |[39m         removeArray[33m:[39m [][33m,[39m
+     [90m 1372 |[39m       })
+    [31m[1m>[22m[39m[90m 1373 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m      |[39m               [31m[1m^[22m[39m
+     [90m 1374 |[39m       message[33m:[39m 
+expect[33m.[39mstringContaining([32m'too long'[39m)[33m,[39m
+     [90m 1375 |[39m       code[33m:[39m [32m'22001'[39m[33m,[39m
+     [90m 1376 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (tests/event/updateEventById.test.ts:1373:15)
+
+  console.error
+    Γ¥î deleteEvent error: { message: 'Event not found', code: 'PGRST116' }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:153:7)
+
+FAIL tests/event/createEvent.test.ts (26.42 s)
+  createEvent API
+    ΓêÜ createEvent_WhenValidInput_ReturnsSuccess (54 ms)
+    ΓêÜ createEvent_WhenTeamIdIsNull_ReturnsFailure (26 ms)
+    ΓêÜ createEvent_WhenTitleIsEmpty_ReturnsFailure (4 ms)
+    ΓêÜ createEvent_WhenEventDateIsInvalid_ReturnsFailure (1 ms)
+    ΓêÜ createEvent_WhenDatabaseError_ReturnsFailure (4 ms)
+    ΓêÜ createEvent_WhenWithMembers_CreatesInvitations (6 ms)
+    ΓêÜ createEvent_WhenWithLeaders_CreatesLeaderInvitations (2 ms)
+    ΓêÜ createEvent_WhenEndTimeBeforeStartTime_ReturnsFailure (5 ms)
+    ΓêÜ createEvent_WhenInvalidEventStatus_ReturnsFailure (2 ms)
+    ΓêÜ createEvent_WhenInvalidEventType_ReturnsFailure (4 ms)
+    ΓêÜ createEvent_WhenDuplicateInvitation_LogsError (1 ms)
+    ├ù createEvent_WhenEndTimeBeforeStartTimeButExpectSuccess_ShouldFail
+    ΓêÜ createEvent_WhenTitleIsTooLong_ShouldFail (17 ms)
+    ΓêÜ createEvent_WhenLocationNameIsTooLong_ShouldFail (1 ms)
+    ΓêÜ createEvent_WhenOpponentIsTooLong_ShouldFail (12 ms)
+    ΓêÜ createEvent_WhenTeamIdDoesNotExist_ShouldFail (4 ms)
+    ΓêÜ createEvent_WhenCreatedByDoesNotExist_ShouldFail (1 ms)
+    Γùï skipped createEvent_WhenMaxParticipantsZero_ReturnsFailure
+
+  ΓùÅ createEvent API ΓÇ║ 
+createEvent_WhenEndTimeBeforeStartTimeButExpectSuccess_ShouldFail
+
+    new row for relation "events" violates check constraint 
+"events_end_after_start"
+
+
+
+  console.error
+    Γ¥î deleteEvent error: { message: 'Invalid event ID', code: 'PGRST202' }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:204:7)
+
+FAIL tests/event/upsertInvitations.test.ts (26.626 s)
+  upsertInvitations API
+    ΓêÜ upsertInvitations_WhenAddMembers_InsertsInvitations (55 ms)
+    ΓêÜ upsertInvitations_WhenRemoveMembers_DeletesInvitations (5 ms)
+    ΓêÜ upsertInvitations_WhenAddAndRemove_InsertsAndDeletes (3 ms)
+    ΓêÜ upsertInvitations_WhenEmptyArrays_ReturnsSuccess (1 ms)
+    ΓêÜ upsertInvitations_WhenEventIdIsNull_ReturnsFailure (2 ms)
+    ΓêÜ upsertInvitations_WhenEventIdIsEmpty_ReturnsFailure (3 ms)
+    ΓêÜ upsertInvitations_WhenInvitedByIsNull_ReturnsFailure (1 ms)
+    ΓêÜ upsertInvitations_WhenDeleteError_ReturnsFailure (1 ms)
+    ΓêÜ upsertInvitations_WhenInsertError_ReturnsFailure (2 ms)
+    ΓêÜ upsertInvitations_WhenDuplicateInvitation_ReturnsFailure (4 ms)
+    ├ù upsertInvitations_WhenEventIdDoesNotExist_ShouldFail (317 ms)
+    ΓêÜ upsertInvitations_WhenUserIdDoesNotExist_ShouldFail (1 ms)
+    ├ù upsertInvitations_WhenInvitedByDoesNotExist_ShouldFail (4 ms)
+
+  ΓùÅ upsertInvitations API ΓÇ║ 
+upsertInvitations_WhenEventIdDoesNotExist_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "23503",
+    -   "message": StringContaining "foreign key constraint",
+    - }
+    + [TypeError: supabase_1.supabase.from(...).insert is not a function]
+
+    [0m [90m 596 |[39m         removedMembers[33m:[39m [][33m,[39m
+     [90m 597 |[39m       })
+    [31m[1m>[22m[39m[90m 598 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 599 |[39m       message[33m:[39m 
+expect[33m.[39mstringContaining([32m'foreign key 
+constraint'[39m)[33m,[39m
+     [90m 600 |[39m       code[33m:[39m [32m'23503'[39m[33m,[39m
+     [90m 601 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (tests/event/upsertInvitations.test.ts:598:15)
+
+  ΓùÅ upsertInvitations API ΓÇ║ 
+upsertInvitations_WhenInvitedByDoesNotExist_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "23503",
+    -   "message": StringContaining "foreign key constraint",
+    - }
+    + [TypeError: supabase_1.supabase.from(...).insert is not a function]
+
+    [0m [90m 679 |[39m         removedMembers[33m:[39m [][33m,[39m
+     [90m 680 |[39m       })
+    [31m[1m>[22m[39m[90m 681 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 682 |[39m       message[33m:[39m 
+expect[33m.[39mstringContaining([32m'foreign key 
+constraint'[39m)[33m,[39m
+     [90m 683 |[39m       code[33m:[39m [32m'23503'[39m[33m,[39m
+     [90m 684 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (tests/event/upsertInvitations.test.ts:681:15)
+
+  console.error
+    Γ¥î deleteEvent error: { message: 'Event not found', code: 'PGRST116' }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:251:7)
+
+  console.error
+    Γ¥î deleteEvent error: {
+      message: 'null value in column "cancelled_by" violates not-null constraint',
+      code: '23502',
+      details: 'Failing row contains (..., cancelled_by=null).'
+    }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:288:5)
+
+  console.error
+    Γ¥î deleteEvent error: { message: 'Invalid user ID', code: 'PGRST202' }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:335:7)
+
+  console.error
+    Γ¥î deleteEvent error: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:489:7)
+
+  console.error
+    Γ¥î deleteEvent error: {
+      message: 'null value in column "cancelled_by" violates not-null constraint',
+      code: '23502',
+      details: 'Failing row contains (..., cancelled_by=null).'
+    }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:681:20)
+
+  console.error
+    Γ¥î deleteEvent error: {
+      message: 'insert or update on table "events" violates foreign key constraint "events_cancelled_by_fkey"',
+      code: '23503',
+      details: 'Key (cancelled_by)=(user-not-exist) is not present in table "auth.users".'
+    }
+
+    [0m [90m 663 |[39m     [36mreturn[39m data[33m;[39m
+     [90m 664 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 665 |[39m     console[33m.[39merror([32m'Γ¥î deleteEvent error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 666 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 667 |[39m   }
+     [90m 668 |[39m }[33m;[39m[0m
+
+      at deleteEvent (features/event/api/event.ts:665:13)
+      at Object.<anonymous> (tests/event/deleteEvent.test.ts:723:5)
+
+FAIL tests/event/deleteEvent.test.ts (26.972 s)
+  deleteEvent API
+    ΓêÜ deleteEvent_WhenValidInput_ReturnsSuccess (109 ms)
+    ΓêÜ deleteEvent_WhenEventNotFound_ReturnsFailure (619 ms)
+    ΓêÜ deleteEvent_WhenEventIdIsNull_ReturnsFailure (135 ms)
+    ΓêÜ deleteEvent_WhenEventIdIsEmpty_ReturnsFailure (214 ms)
+    ΓêÜ deleteEvent_WhenUserIdIsNull_ReturnsFailure (20 ms)
+    ΓêÜ deleteEvent_WhenUserIdIsEmpty_ReturnsFailure (19 ms)
+    ΓêÜ deleteEvent_WhenReasonIsNull_ReturnsSuccess (8 ms)
+    ΓêÜ deleteEvent_WhenReasonIsEmpty_ReturnsSuccess (1 ms)
+    ΓêÜ deleteEvent_WhenDatabaseError_ReturnsFailure (32 ms)
+    ΓêÜ deleteEvent_UpdatesEventStatusToCancelled (5 ms)
+    ΓêÜ deleteEvent_UpdatesCancelledAtTimestamp (17 ms)
+    ΓêÜ deleteEvent_UpdatesCancelledByUserId (2 ms)
+    ├ù deleteEvent_WhenCancelledByIsNullButExpectSuccess_ShouldFail (38 ms)
+    ΓêÜ deleteEvent_WhenCancelledByDoesNotExist_ShouldFail (16 ms)
+
+  ΓùÅ deleteEvent API ΓÇ║ 
+deleteEvent_WhenCancelledByIsNullButExpectSuccess_ShouldFail
+
+    null value in column "cancelled_by" violates not-null constraint
+
+
+
+  console.error
+    Γ¥î getEventEdit error: { message: 'Event not found', code: 'PGRST116' }
+
+    [0m [90m 637 |[39m     }[33m;[39m
+     [90m 638 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 639 |[39m     console[33m.[39merror([32m'Γ¥î getEventEdit error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 640 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 641 |[39m   }
+     [90m 642 |[39m }[33m;[39m[0m
+
+      at getEventEdit (features/event/api/event.ts:639:13)
+      at Object.<anonymous> (tests/event/getEventEdit.test.ts:153:5)
+
+  console.error
+    Γ¥î Delete Eventsquad error in try/catch: Error: Missing eventId in getDeleteAllEventSquad
+        at getDeleteAllEventSquad (D:\sporthawk_mobile_clone-fix-manage-account-auth\features\event\api\event.ts:913:25)
+        at Object.<anonymous> (D:\sporthawk_mobile_clone-fix-manage-account-auth\tests\event\getDeleteAllEventSquad.test.ts:107:29)
+        at Promise.then.completed (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:231:10)
+        at _callCircusTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:316:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:252:3)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:126:9)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:121:9)
+        at run (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:71:3)
+        at runAndTransformResultsToJestFormat (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+        at jestAdapter (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+        at runTestInternal (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:367:16)
+        at runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:444:34)
+        at Object.worker (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\testWorker.js:106:12)
+
+    [0m [90m 924 |[39m     [36mreturn[39m { data[33m,[39m eventId }[33m;[39m
+     [90m 925 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 926 |[39m     console[33m.[39merror([32m'Γ¥î Delete Eventsquad error in try/catch:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 927 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 928 |[39m   }
+     [90m 929 |[39m }[33m;[39m[0m
+
+      at getDeleteAllEventSquad (features/event/api/event.ts:926:13)
+      at Object.<anonymous> (tests/event/getDeleteAllEventSquad.test.ts:107:29)
+
+  console.error
+    Γ¥î getEventEdit error: {
+      message: 'null value in column "id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 637 |[39m     }[33m;[39m
+     [90m 638 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 639 |[39m     console[33m.[39merror([32m'Γ¥î getEventEdit error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 640 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 641 |[39m   }
+     [90m 642 |[39m }[33m;[39m[0m
+
+      at getEventEdit (features/event/api/event.ts:639:13)
+      at Object.<anonymous> (tests/event/getEventEdit.test.ts:192:5)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-123', userId: 'user-123', teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:77:13)
+
+  console.log
+    Γ£à Output: {
+      "id": "event-123",
+      "title": "Test Match",
+      "event_type": "home_match",
+      "event_date": "2025-12-25",
+      "start_time": "14:00:00",
+      "team_id": "team-123",
+      "event_invitations": [
+        {
+          "id": "inv-1",
+          "userId": "user-1",
+          "invitationStatus": "pending"
+        },
+        {
+          "id": "inv-2",
+          "userId": "user-2",
+          "invitationStatus": "accepted"
+        }
+      ]
+    }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:124:13)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-not-exist', userId: 'user-123', teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:149:13)
+
+  console.error
+    Γ¥î getEventEdit error: { message: 'Event not found', code: 'PGRST116' }
+
+    [0m [90m 637 |[39m     }[33m;[39m
+     [90m 638 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 639 |[39m     console[33m.[39merror([32m'Γ¥î getEventEdit error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 640 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 641 |[39m   }
+     [90m 642 |[39m }[33m;[39m[0m
+
+      at getEventEdit (features/event/api/event.ts:639:13)
+      at Object.<anonymous> (tests/event/getEventEdit.test.ts:231:5)
+
+  console.error
+    Γ¥î Delete Eventsquad error in try/catch: Error: Missing eventId in getDeleteAllEventSquad
+        at getDeleteAllEventSquad (D:\sporthawk_mobile_clone-fix-manage-account-auth\features\event\api\event.ts:913:25)
+        at Object.<anonymous> (D:\sporthawk_mobile_clone-fix-manage-account-auth\tests\event\getDeleteAllEventSquad.test.ts:132:29)
+        at Promise.then.completed (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:231:10)
+        at _callCircusTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:316:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:252:3)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:126:9)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:121:9)
+        at run (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:71:3)
+        at runAndTransformResultsToJestFormat (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+        at jestAdapter (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+        at runTestInternal (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:367:16)
+        at runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:444:34)
+        at Object.worker (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\testWorker.js:106:12)
+
+    [0m [90m 924 |[39m     [36mreturn[39m { data[33m,[39m eventId }[33m;[39m
+     [90m 925 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 926 |[39m     console[33m.[39merror([32m'Γ¥î Delete Eventsquad error in try/catch:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 927 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 928 |[39m   }
+     [90m 929 |[39m }[33m;[39m[0m
+
+      at getDeleteAllEventSquad (features/event/api/event.ts:926:13)
+      at Object.<anonymous> (tests/event/getDeleteAllEventSquad.test.ts:132:29)
+
+  console.error
+    Γ¥î Delete Eventsquad error: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 919 |[39m
+     [90m 920 |[39m     [36mif[39m (error) {
+    [31m[1m>[22m[39m[90m 921 |[39m       console[33m.[39merror([32m'Γ¥î Delete Eventsquad error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 922 |[39m       [36mthrow[39m error[33m;[39m
+     [90m 923 |[39m     }
+     [90m 924 |[39m     [36mreturn[39m { data[33m,[39m eventId }[33m;[39m[0m
+
+      at getDeleteAllEventSquad (features/event/api/event.ts:921:15)
+      at Object.<anonymous> (tests/event/getDeleteAllEventSquad.test.ts:212:5)
+
+  console.error
+    Γ¥î getEventEdit error: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 637 |[39m     }[33m;[39m
+     [90m 638 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 639 |[39m     console[33m.[39merror([32m'Γ¥î getEventEdit error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 640 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 641 |[39m   }
+     [90m 642 |[39m }[33m;[39m[0m
+
+      at getEventEdit (features/event/api/event.ts:639:13)
+      at Object.<anonymous> (tests/event/getEventEdit.test.ts:270:5)
+
+PASS tests/event/getEventEdit.test.ts (27.518 s)
+  getEventEdit API
+    ΓêÜ getEventEdit_WhenEventExists_ReturnsSuccess (63 ms)
+    ΓêÜ getEventEdit_WhenEventNotFound_ReturnsFailure (681 ms)
+    ΓêÜ getEventEdit_WhenEventIdIsNull_ReturnsFailure (38 ms)
+    ΓêÜ getEventEdit_WhenEventIdIsEmpty_ReturnsFailure (346 ms)
+    ΓêÜ getEventEdit_WhenDatabaseError_ReturnsFailure (123 ms)
+    ΓêÜ getEventEdit_ReturnsEditEventDataWithAllFields (17 ms)
+
+  console.error
+    Γ¥î Delete Eventsquad error in try/catch: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 924 |[39m     [36mreturn[39m { data[33m,[39m eventId }[33m;[39m
+     [90m 925 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 926 |[39m     console[33m.[39merror([32m'Γ¥î Delete Eventsquad error in try/catch:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 927 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 928 |[39m   }
+     [90m 929 |[39m }[33m;[39m[0m
+
+      at getDeleteAllEventSquad (features/event/api/event.ts:926:13)
+      at Object.<anonymous> (tests/event/getDeleteAllEventSquad.test.ts:212:5)
+
+PASS tests/event/getDeleteAllEventSquad.test.ts (27.673 s)
+  getDeleteAllEventSquad API
+    ΓêÜ getDeleteAllEventSquad_WhenEventExists_ReturnsSuccess (44 ms)
+    ΓêÜ getDeleteAllEventSquad_WhenEventIdIsNull_ReturnsFailure (709 ms)
+    ΓêÜ getDeleteAllEventSquad_WhenEventIdIsEmpty_ReturnsFailure (367 ms)
+    ΓêÜ getDeleteAllEventSquad_WhenEventNotFound_ReturnsSuccess (4 ms)
+    ΓêÜ getDeleteAllEventSquad_WhenDatabaseError_ReturnsFailure (172 ms)
+    ΓêÜ getDeleteAllEventSquad_ReturnsDataWithEventId (17 ms)
+
+  console.error
+    JOIN ERROR: {
+      message: 'Event not found',
+      code: 'PGRST116',
+      details: 'The result contains 0 rows'
+    }
+
+    [0m [90m 173 |[39m
+     [90m 174 |[39m     [36mif[39m (error) {
+    [31m[1m>[22m[39m[90m 175 |[39m       console[33m.[39merror([32m'JOIN ERROR:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 176 |[39m       [36mthrow[39m error[33m;[39m
+     [90m 177 |[39m     }
+     [90m 178 |[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:175:15)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:179:7)
+
+  console.error
+    error in getEventDetail {
+      message: 'Event not found',
+      code: 'PGRST116',
+      details: 'The result contains 0 rows'
+    }
+
+    [0m [90m 207 |[39m     [36mreturn[39m detailData[33m;[39m
+     [90m 208 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 209 |[39m     console[33m.[39merror([32m'error in getEventDetail'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 210 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 211 |[39m   }
+     [90m 212 |[39m }[33m;[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:209:13)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:179:7)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: null, userId: 'user-123', teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:207:13)
+
+  console.error
+    JOIN ERROR: { message: 'Invalid event ID', code: 'PGRST202' }
+
+    [0m [90m 173 |[39m
+     [90m 174 |[39m     [36mif[39m (error) {
+    [31m[1m>[22m[39m[90m 175 |[39m       console[33m.[39merror([32m'JOIN ERROR:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 176 |[39m       [36mthrow[39m error[33m;[39m
+     [90m 177 |[39m     }
+     [90m 178 |[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:175:15)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:236:7)
+
+  console.error
+    Γ¥î error in getEventSquadsSelect: {
+      message: 'null value in column "event_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 781 |[39m     }[33m;[39m
+     [90m 782 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 783 |[39m     console[33m.[39merror([32m'Γ¥î error in getEventSquadsSelect:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 784 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 785 |[39m   }
+     [90m 786 |[39m }[33m;[39m[0m
+
+      at getEventSquadsSelect (features/event/api/event.ts:783:13)
+      at Object.<anonymous> (tests/event/getEventSquadsSelect.test.ts:157:5)
+
+  console.error
+    Γ¥î error in getEventSquadsSelect: { message: 'Invitation not found', code: 'PGRST116' }
+
+    [0m [90m 781 |[39m     }[33m;[39m
+     [90m 782 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 783 |[39m     console[33m.[39merror([32m'Γ¥î error in getEventSquadsSelect:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 784 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 785 |[39m   }
+     [90m 786 |[39m }[33m;[39m[0m
+
+      at getEventSquadsSelect (features/event/api/event.ts:783:13)
+      at Object.<anonymous> (tests/event/getEventSquadsSelect.test.ts:209:5)
+
+  console.error
+    error in getEventDetail { message: 'Invalid event ID', code: 'PGRST202' }
+
+    [0m [90m 207 |[39m     [36mreturn[39m detailData[33m;[39m
+     [90m 208 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 209 |[39m     console[33m.[39merror([32m'error in getEventDetail'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 210 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 211 |[39m   }
+     [90m 212 |[39m }[33m;[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:209:13)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:236:7)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: '', userId: 'user-123', teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:260:13)
+
+  console.error
+    JOIN ERROR: { message: 'Event not found', code: 'PGRST116' }
+
+    [0m [90m 173 |[39m
+     [90m 174 |[39m     [36mif[39m (error) {
+    [31m[1m>[22m[39m[90m 175 |[39m       console[33m.[39merror([32m'JOIN ERROR:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 176 |[39m       [36mthrow[39m error[33m;[39m
+     [90m 177 |[39m     }
+     [90m 178 |[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:175:15)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:289:7)
+
+  console.error
+    Γ¥î error in getEventSquadsSelect: {
+      message: 'null value in column "user_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 781 |[39m     }[33m;[39m
+     [90m 782 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 783 |[39m     console[33m.[39merror([32m'Γ¥î error in getEventSquadsSelect:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 784 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 785 |[39m   }
+     [90m 786 |[39m }[33m;[39m[0m
+
+      at getEventSquadsSelect (features/event/api/event.ts:783:13)
+      at Object.<anonymous> (tests/event/getEventSquadsSelect.test.ts:261:5)
+
+  console.error
+    error in getEventDetail { message: 'Event not found', code: 'PGRST116' }
+
+    [0m [90m 207 |[39m     [36mreturn[39m detailData[33m;[39m
+     [90m 208 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 209 |[39m     console[33m.[39merror([32m'error in getEventDetail'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 210 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 211 |[39m   }
+     [90m 212 |[39m }[33m;[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:209:13)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:289:7)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-123', userId: 'user-123', teamId: 'invalid-team' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:313:13)
+
+  console.error
+    Γ¥î error in getEventSquadsSelect: { message: 'Invitation not found', code: 'PGRST116' }
+
+    [0m [90m 781 |[39m     }[33m;[39m
+     [90m 782 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 783 |[39m     console[33m.[39merror([32m'Γ¥î error in getEventSquadsSelect:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 784 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 785 |[39m   }
+     [90m 786 |[39m }[33m;[39m[0m
+
+      at getEventSquadsSelect (features/event/api/event.ts:783:13)
+      at Object.<anonymous> (tests/event/getEventSquadsSelect.test.ts:313:5)
+
+  console.error
+    Error in getTeamLeadersWithTeamId: {
+      message: 'null value in column "team_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 543 |[39m     }[33m;[39m
+     [90m 544 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 545 |[39m     console[33m.[39merror([32m'Error in getTeamLeadersWithTeamId:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 546 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 547 |[39m   }
+     [90m 548 |[39m }[33m;[39m[0m
+
+      at getTeamLeadersWithTeamId (features/event/api/event.ts:545:13)
+      at Object.<anonymous> (tests/event/getTeamLeadersWithTeamId.test.ts:184:5)
+
+  console.error
+    Γ¥î error in getEventSquadsSelect: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 781 |[39m     }[33m;[39m
+     [90m 782 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 783 |[39m     console[33m.[39merror([32m'Γ¥î error in getEventSquadsSelect:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 784 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 785 |[39m   }
+     [90m 786 |[39m }[33m;[39m[0m
+
+      at getEventSquadsSelect (features/event/api/event.ts:783:13)
+      at Object.<anonymous> (tests/event/getEventSquadsSelect.test.ts:352:5)
+
+  console.error
+    Γ¥î error in getEventSquadsSelect: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 781 |[39m     }[33m;[39m
+     [90m 782 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 783 |[39m     console[33m.[39merror([32m'Γ¥î error in getEventSquadsSelect:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 784 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 785 |[39m   }
+     [90m 786 |[39m }[33m;[39m[0m
+
+      at getEventSquadsSelect (features/event/api/event.ts:783:13)
+      at Object.<anonymous> (tests/event/getEventSquadsSelect.test.ts:404:5)
+
+  console.error
+    error in getEventInvitationsStatus {
+      message: 'null value in column "event_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 725 |[39m     [36mreturn[39m invitationsStatusData[33m;[39m
+     [90m 726 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 727 |[39m     console[33m.[39merror([32m'error in getEventInvitationsStatus'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 728 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 729 |[39m   }
+     [90m 730 |[39m }[33m;[39m[0m
+
+      at getEventInvitationsStatus (features/event/api/event.ts:727:13)
+      at Object.<anonymous> (tests/event/getEventInvitationsStatus.test.ts:178:5)
+
+  console.error
+    TEAM MEMBERS ERROR: { message: 'Team not found', code: 'PGRST116' }
+
+    [0m [90m 188 |[39m
+     [90m 189 |[39m     [36mif[39m (teamError) {
+    [31m[1m>[22m[39m[90m 190 |[39m       console[33m.[39merror([32m'TEAM MEMBERS ERROR:'[39m[33m,[39m teamError)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 191 |[39m       [36mthrow[39m teamError[33m;[39m
+     [90m 192 |[39m     }
+     [90m 193 |[39m     [36mif[39m (leaderError) {[0m
+
+      at getEventDetail (features/event/api/event.ts:190:15)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:351:7)
+
+  console.error
+    Error in getTeamLeadersWithTeamId: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 543 |[39m     }[33m;[39m
+     [90m 544 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 545 |[39m     console[33m.[39merror([32m'Error in getTeamLeadersWithTeamId:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 546 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 547 |[39m   }
+     [90m 548 |[39m }[33m;[39m[0m
+
+      at getTeamLeadersWithTeamId (features/event/api/event.ts:545:13)
+      at Object.<anonymous> (tests/event/getTeamLeadersWithTeamId.test.ts:305:5)
+
+PASS tests/event/getTeamLeadersWithTeamId.test.ts
+  getTeamLeadersWithTeamId API
+    ΓêÜ getTeamLeadersWithTeamId_WhenValidInput_ReturnsSuccess (61 ms)
+    ΓêÜ getTeamLeadersWithTeamId_WhenTeamIdIsAll_ReturnsEmptyArray (4 ms)
+    ΓêÜ getTeamLeadersWithTeamId_WhenTeamIdIsNull_ReturnsFailure (54 ms)
+    ΓêÜ getTeamLeadersWithTeamId_WhenTeamIdIsEmpty_ReturnsFailure (1 ms)
+    ΓêÜ getTeamLeadersWithTeamId_WhenNoLeaders_ReturnsEmptyArray (1 ms)
+    ΓêÜ getTeamLeadersWithTeamId_WhenDatabaseError_ReturnsFailure (99 ms)
+    ΓêÜ getTeamLeadersWithTeamId_ReturnsLeaderDataWithIsChooseTrue (12 ms)
+    ΓêÜ getTeamLeadersWithTeamId_ReturnsLeaderDataWithAllFields (11 ms)
+    ΓêÜ getTeamLeadersWithTeamId_OrdersByIsPrimary (2 ms)
+
+  console.error
+    error in getEventInvitationsStatus {
+      message: 'null value in column "user_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 725 |[39m     [36mreturn[39m invitationsStatusData[33m;[39m
+     [90m 726 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 727 |[39m     console[33m.[39merror([32m'error in getEventInvitationsStatus'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 728 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 729 |[39m   }
+     [90m 730 |[39m }[33m;[39m[0m
+
+      at getEventInvitationsStatus (features/event/api/event.ts:727:13)
+      at Object.<anonymous> (tests/event/getEventInvitationsStatus.test.ts:263:5)
+
+  console.error
+    Error in getTeamAdminsSimple: {
+      message: 'null value in column "team_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 455 |[39m     }[33m;[39m
+     [90m 456 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 457 |[39m     console[33m.[39merror([32m'Error in getTeamAdminsSimple:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 458 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 459 |[39m   }
+     [90m 460 |[39m }[33m;[39m[0m
+
+      at getTeamAdminsSimple (features/event/api/event.ts:457:13)
+      at Object.<anonymous> (tests/event/getTeamAdminsSimple.test.ts:174:5)
+
+  console.error
+    error in getEventDetail { message: 'Team not found', code: 'PGRST116' }
+
+    [0m [90m 207 |[39m     [36mreturn[39m detailData[33m;[39m
+     [90m 208 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 209 |[39m     console[33m.[39merror([32m'error in getEventDetail'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 210 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 211 |[39m   }
+     [90m 212 |[39m }[33m;[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:209:13)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:351:7)
+
+  console.error
+    Γ¥î error in getEventSquadsSelect: { message: 'Invitation not found', code: 'PGRST116' }
+
+    [0m [90m 781 |[39m     }[33m;[39m
+     [90m 782 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 783 |[39m     console[33m.[39merror([32m'Γ¥î error in getEventSquadsSelect:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 784 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 785 |[39m   }
+     [90m 786 |[39m }[33m;[39m[0m
+
+      at getEventSquadsSelect (features/event/api/event.ts:783:13)
+      at Object.<anonymous> (tests/event/getEventSquadsSelect.test.ts:565:5)
+
+  console.error
+    error in getEventInvitationsStatus { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 725 |[39m     [36mreturn[39m invitationsStatusData[33m;[39m
+     [90m 726 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 727 |[39m     console[33m.[39merror([32m'error in getEventInvitationsStatus'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 728 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 729 |[39m   }
+     [90m 730 |[39m }[33m;[39m[0m
+
+      at getEventInvitationsStatus (features/event/api/event.ts:727:13)
+      at Object.<anonymous> (tests/event/getEventInvitationsStatus.test.ts:348:5)
+
+PASS tests/event/getEventInvitationsStatus.test.ts
+  getEventInvitationsStatus API
+    ΓêÜ getEventInvitationsStatus_WhenInvitationExists_ReturnsSuccess (40 ms)
+    ΓêÜ getEventInvitationsStatus_WhenInvitationNotFound_ReturnsNull (6 ms)
+    ΓêÜ getEventInvitationsStatus_WhenEventIdIsNull_ReturnsFailure (99 ms)
+    ΓêÜ getEventInvitationsStatus_WhenEventIdIsEmpty_ReturnsFailure (2 ms)
+    ΓêÜ getEventInvitationsStatus_WhenUserIdIsNull_ReturnsFailure (108 ms)
+    ΓêÜ getEventInvitationsStatus_WhenUserIdIsEmpty_ReturnsFailure (1 ms)
+    ΓêÜ getEventInvitationsStatus_WhenDatabaseError_ReturnsFailure (39 ms)
+    ΓêÜ getEventInvitationsStatus_ReturnsInvitationWithAllFields (5 ms)
+
+PASS tests/event/getEventSquadsSelect.test.ts
+  getEventSquadsSelect API
+    ΓêÜ getEventSquadsSelect_WhenEventExists_ReturnsSuccess (201 ms)
+    ΓêÜ getEventSquadsSelect_WhenEventIdIsNull_ReturnsFailure (628 ms)
+    ΓêÜ getEventSquadsSelect_WhenEventIdIsEmpty_ReturnsFailure (29 ms)
+    ΓêÜ getEventSquadsSelect_WhenUserIdIsNull_ReturnsFailure (83 ms)
+    ΓêÜ getEventSquadsSelect_WhenUserIdIsEmpty_ReturnsFailure (84 ms)
+    ΓêÜ getEventSquadsSelect_WhenSquadsError_ReturnsFailure (46 ms)
+    ΓêÜ getEventSquadsSelect_WhenInvitationsError_ReturnsFailure (55 ms)
+    ΓêÜ getEventSquadsSelect_ReturnsSquadsAndInvitations (14 ms)
+    ΓêÜ getEventSquadsSelect_WhenNoSquads_ReturnsEmptyArray (6 ms)
+    ΓêÜ getEventSquadsSelect_WhenNoInvitation_ReturnsNullInvitation (133 ms)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-123', userId: 'user-123', teamId: null }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:375:13)
+
+  console.error
+    Error in getTeamAdminsSimple: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 455 |[39m     }[33m;[39m
+     [90m 456 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 457 |[39m     console[33m.[39merror([32m'Error in getTeamAdminsSimple:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 458 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 459 |[39m   }
+     [90m 460 |[39m }[33m;[39m[0m
+
+      at getTeamAdminsSimple (features/event/api/event.ts:457:13)
+      at Object.<anonymous> (tests/event/getTeamAdminsSimple.test.ts:495:5)
+
+  console.error
+    TEAM MEMBERS ERROR: { message: 'Team ID is required', code: 'PGRST202' }
+
+    [0m [90m 188 |[39m
+     [90m 189 |[39m     [36mif[39m (teamError) {
+    [31m[1m>[22m[39m[90m 190 |[39m       console[33m.[39merror([32m'TEAM MEMBERS ERROR:'[39m[33m,[39m teamError)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 191 |[39m       [36mthrow[39m teamError[33m;[39m
+     [90m 192 |[39m     }
+     [90m 193 |[39m     [36mif[39m (leaderError) {[0m
+
+      at getEventDetail (features/event/api/event.ts:190:15)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:413:7)
+
+  console.error
+    error in getEventDetail { message: 'Team ID is required', code: 'PGRST202' }
+
+    [0m [90m 207 |[39m     [36mreturn[39m detailData[33m;[39m
+     [90m 208 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 209 |[39m     console[33m.[39merror([32m'error in getEventDetail'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 210 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 211 |[39m   }
+     [90m 212 |[39m }[33m;[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:209:13)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:413:7)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-123', userId: null, teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:437:13)
+
+PASS tests/event/getTeamMembersWithTeamId.test.ts
+  getTeamMembersWithTeamId API
+    ΓêÜ getTeamMembersWithTeamId_WhenValidInput_ReturnsSuccess (13 ms)
+    ΓêÜ getTeamMembersWithTeamId_WhenTeamIdIsAll_ReturnsEmptyArray (1 ms)
+    ΓêÜ getTeamMembersWithTeamId_WhenTeamIdIsNull_ReturnsFailure (1 ms)
+    ΓêÜ getTeamMembersWithTeamId_WhenTeamIdIsEmpty_ReturnsFailure (1 ms)
+    ΓêÜ getTeamMembersWithTeamId_WhenNoMembers_ReturnsEmptyArray (1 ms)
+    ΓêÜ getTeamMembersWithTeamId_WhenDatabaseError_ReturnsFailure (1 ms)
+    ΓêÜ getTeamMembersWithTeamId_ReturnsMemberDataWithIsChooseTrue (1 ms)
+    ΓêÜ getTeamMembersWithTeamId_ReturnsMemberDataWithAllFields (4 ms)
+
+  console.log
+    Γ£à Output: {
+      "id": "event-123",
+      "title": "Test Match",
+      "event_type": "home_match",
+      "event_date": "2025-12-25",
+      "start_time": "14:00:00",
+      "team_id": "team-123",
+      "event_invitations": [
+        {
+          "id": "inv-1",
+          "userId": "user-1",
+          "invitationStatus": "pending"
+        },
+        {
+          "id": "inv-2",
+          "userId": "user-2",
+          "invitationStatus": "accepted"
+        }
+      ]
+    }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:484:13)
+
+  console.log
+    ≡ƒº¬ Test: getEventDetail_WhenEventHasNoInvitations_ReturnsEmptyArray
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:501:13)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-123', userId: 'user-123', teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:504:13)
+
+PASS tests/event/getTeamAdminsSimple.test.ts
+  getTeamAdminsSimple API
+    ΓêÜ getTeamAdminsSimple_WhenValidInput_ReturnsSuccess (12 ms)
+    ΓêÜ getTeamAdminsSimple_WhenTeamIdIsNull_ReturnsFailure (1200 ms)
+    ΓêÜ getTeamAdminsSimple_WhenTeamIdIsEmpty_ReturnsFailure (90 ms)
+    ΓêÜ getTeamAdminsSimple_WhenEventIdIsNull_ReturnsSuccess (11 ms)
+    ΓêÜ getTeamAdminsSimple_WhenEventIdIsEmpty_ReturnsSuccess (21 ms)
+    ΓêÜ getTeamAdminsSimple_WhenNoAdmins_ReturnsEmptyArray (14 ms)
+    ΓêÜ getTeamAdminsSimple_WhenAdminsHaveInvitations_SetsIsChooseTrue (3 ms)
+    ΓêÜ getTeamAdminsSimple_WhenAdminsNoInvitations_SetsIsChooseFalse (7 ms)
+    ΓêÜ getTeamAdminsSimple_WhenDatabaseError_ReturnsFailure (34 ms)
+    ΓêÜ getTeamAdminsSimple_ReturnsLeaderDataWithAllFields (60 ms)
+    ΓêÜ getTeamAdminsSimple_OrdersByIsPrimary (1 ms)
+
+  console.log
+    Γ£à Output: {
+      "id": "event-123",
+      "title": "Test Match",
+      "event_type": "home_match",
+      "event_date": "2025-12-25",
+      "start_time": "14:00:00",
+      "team_id": "team-123",
+      "event_invitations": []
+    }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:556:13)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-123', userId: 'user-123', teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:573:13)
+
+  console.error
+    JOIN ERROR: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 173 |[39m
+     [90m 174 |[39m     [36mif[39m (error) {
+    [31m[1m>[22m[39m[90m 175 |[39m       console[33m.[39merror([32m'JOIN ERROR:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 176 |[39m       [36mthrow[39m error[33m;[39m
+     [90m 177 |[39m     }
+     [90m 178 |[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:175:15)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:602:7)
+
+  console.error
+    Failed to get squad members: {
+      message: 'null value in column "event_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 231 |[39m     [36mreturn[39m data [33m||[39m [][33m;[39m
+     [90m 232 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 233 |[39m     console[33m.[39merror([32m'Failed to get squad members:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 234 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 235 |[39m   }
+     [90m 236 |[39m }[33m;[39m[0m
+
+      at getEventSquad (features/event/api/event.ts:233:13)
+      at Object.<anonymous> (tests/event/getEventSquad.test.ts:169:5)
+
+  console.error
+    error in getEventDetail { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 207 |[39m     [36mreturn[39m detailData[33m;[39m
+     [90m 208 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 209 |[39m     console[33m.[39merror([32m'error in getEventDetail'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 210 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 211 |[39m   }
+     [90m 212 |[39m }[33m;[39m[0m
+
+      at getEventDetail (features/event/api/event.ts:209:13)
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:602:7)
+
+  console.log
+    ≡ƒôÑ Input: { eventId: 'event-123', userId: 'user-123', teamId: 'team-123' }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:626:13)
+
+  console.log
+    Γ£à Output: {
+      "id": "event-123",
+      "title": "Test Match",
+      "event_type": "home_match",
+      "event_date": "2025-12-25",
+      "start_time": "14:00:00",
+      "team_id": "team-123",
+      "event_invitations": [
+        {
+          "id": "inv-1",
+          "userId": "user-1",
+          "invitationStatus": "pending"
+        },
+        {
+          "id": "inv-2",
+          "userId": "user-2",
+          "invitationStatus": "accepted"
+        },
+        {
+          "id": "inv-4",
+          "userId": "admin-1",
+          "invitationStatus": "accepted"
+        }
+      ]
+    }
+
+      at Object.<anonymous> (tests/event/getEventDetail.test.ts:683:13)
+
+PASS tests/event/getEventDetail.test.ts
+  getEventDetail API
+    ΓêÜ getEventDetail_WhenEventExists_ReturnsSuccess (340 ms)
+    ΓêÜ getEventDetail_WhenEventNotFound_ReturnsFailure (586 ms)
+    ΓêÜ getEventDetail_WhenEventIdIsNull_ReturnsFailure (202 ms)
+    ΓêÜ getEventDetail_WhenEventIdIsEmpty_ReturnsFailure (46 ms)
+    ΓêÜ getEventDetail_WhenTeamIdIsInvalid_ReturnsFailure (329 ms)
+    ΓêÜ getEventDetail_WhenTeamIdIsNull_ReturnsFailure (223 ms)
+    ΓêÜ getEventDetail_WhenUserIdIsNull_ReturnsSuccess (9 ms)
+    ΓêÜ getEventDetail_WhenEventHasNoInvitations_ReturnsEmptyArray (36 ms)
+    ΓêÜ getEventDetail_WhenDatabaseError_ReturnsFailure (50 ms)
+    ΓêÜ getEventDetail_FiltersInvitationsByTeamMembers (10 ms)
+
+  console.error
+    Failed to get squad members: { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 231 |[39m     [36mreturn[39m data [33m||[39m [][33m;[39m
+     [90m 232 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 233 |[39m     console[33m.[39merror([32m'Failed to get squad members:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 234 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 235 |[39m   }
+     [90m 236 |[39m }[33m;[39m[0m
+
+      at getEventSquad (features/event/api/event.ts:233:13)
+      at Object.<anonymous> (tests/event/getEventSquad.test.ts:242:5)
+
+PASS tests/event/getEventSquad.test.ts
+  getEventSquad API
+    ΓêÜ getEventSquad_WhenEventExists_ReturnsSuccess (21 ms)
+    ΓêÜ getEventSquad_WhenEventNotFound_ReturnsEmptyArray (2 ms)
+    ΓêÜ getEventSquad_WhenEventIdIsNull_ReturnsFailure (14 ms)
+    ΓêÜ getEventSquad_WhenEventIdIsEmpty_ReturnsFailure (1 ms)
+    ΓêÜ getEventSquad_WhenDatabaseError_ReturnsFailure (110 ms)
+    ΓêÜ getEventSquad_ReturnsSquadMembersWithAllFields (5 ms)
+
+  console.error
+    error in updateHandGestrue {
+      message: 'null value in column "event_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 691 |[39m     [36mreturn[39m updateInvitationsData[33m;[39m
+     [90m 692 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 693 |[39m     console[33m.[39merror([32m'error in updateHandGestrue'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 694 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 695 |[39m   }
+     [90m 696 |[39m }[33m;[39m[0m
+
+      at getUpdateEventInvitationHandGestures (features/event/api/event.ts:693:13)
+      at Object.<anonymous> (tests/event/getUpdateEventInvitationHandGestures.test.ts:164:5)
+
+  console.error
+    error in updateHandGestrue {
+      message: 'null value in column "user_id" violates not-null constraint',
+      code: '23502'
+    }
+
+    [0m [90m 691 |[39m     [36mreturn[39m updateInvitationsData[33m;[39m
+     [90m 692 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 693 |[39m     console[33m.[39merror([32m'error in updateHandGestrue'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 694 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 695 |[39m   }
+     [90m 696 |[39m }[33m;[39m[0m
+
+      at getUpdateEventInvitationHandGestures (features/event/api/event.ts:693:13)
+      at Object.<anonymous> (tests/event/getUpdateEventInvitationHandGestures.test.ts:255:5)
+
+  console.error
+    error in updateHandGestrue { message: 'Database connection error', code: 'PGRST301' }
+
+    [0m [90m 691 |[39m     [36mreturn[39m updateInvitationsData[33m;[39m
+     [90m 692 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 693 |[39m     console[33m.[39merror([32m'error in updateHandGestrue'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 694 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 695 |[39m   }
+     [90m 696 |[39m }[33m;[39m[0m
+
+      at getUpdateEventInvitationHandGestures (features/event/api/event.ts:693:13)
+      at Object.<anonymous> (tests/event/getUpdateEventInvitationHandGestures.test.ts:484:5)
+
+PASS tests/event/getTeamMembersSimple.test.ts
+  getTeamMembersSimple API
+    ΓêÜ getTeamMembersSimple_WhenValidInput_ReturnsSuccess (11 ms)
+    ΓêÜ getTeamMembersSimple_WhenTeamIdIsNull_ReturnsFailure (2 ms)
+    ΓêÜ getTeamMembersSimple_WhenTeamIdIsEmpty_ReturnsFailure (1 ms)
+    ΓêÜ getTeamMembersSimple_WhenEventIdIsNull_ReturnsSuccess (1 ms)
+    ΓêÜ getTeamMembersSimple_WhenEventIdIsEmpty_ReturnsSuccess (1 ms)
+    ΓêÜ getTeamMembersSimple_WhenNoMembers_ReturnsEmptyArray (1 ms)
+    ΓêÜ getTeamMembersSimple_WhenMembersHaveInvitations_SetsIsChooseTrue (15 
+ms)
+    ΓêÜ getTeamMembersSimple_WhenMembersNoInvitations_SetsIsChooseFalse (2 ms)
+    ΓêÜ getTeamMembersSimple_WhenDatabaseError_ReturnsFailure (1 ms)
+    ΓêÜ getTeamMembersSimple_ReturnsMemberDataWithAllFields (6 ms)
+
+  console.error
+    error in updateHandGestrue TypeError: supabase_1.supabase.from(...).update(...).eq(...).eq(...).select is not a function
+        at getUpdateEventInvitationHandGestures (D:\sporthawk_mobile_clone-fix-manage-account-auth\features\event\api\event.ts:686:10)
+        at Object.<anonymous> (D:\sporthawk_mobile_clone-fix-manage-account-auth\tests\event\getUpdateEventInvitationHandGestures.test.ts:572:43)
+        at Promise.then.completed (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:231:10)
+        at _callCircusTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:316:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:252:3)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:126:9)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:121:9)
+        at run (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:71:3)
+        at runAndTransformResultsToJestFormat (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+        at jestAdapter (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+        at runTestInternal (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:367:16)
+        at runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:444:34)
+        at Object.worker (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\testWorker.js:106:12)
+
+    [0m [90m 691 |[39m     [36mreturn[39m updateInvitationsData[33m;[39m
+     [90m 692 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 693 |[39m     console[33m.[39merror([32m'error in updateHandGestrue'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 694 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 695 |[39m   }
+     [90m 696 |[39m }[33m;[39m[0m
+
+      at getUpdateEventInvitationHandGestures (features/event/api/event.ts:693:13)
+      at Object.<anonymous> (tests/event/getUpdateEventInvitationHandGestures.test.ts:572:43)
+
+  console.error
+    error in updateHandGestrue TypeError: supabase_1.supabase.from(...).update(...).eq(...).eq(...).select is not a function
+        at getUpdateEventInvitationHandGestures (D:\sporthawk_mobile_clone-fix-manage-account-auth\features\event\api\event.ts:686:10)
+        at Object.<anonymous> (D:\sporthawk_mobile_clone-fix-manage-account-auth\tests\event\getUpdateEventInvitationHandGestures.test.ts:610:43)
+        at Promise.then.completed (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\utils.js:231:10)
+        at _callCircusTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:316:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:252:3)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:126:9)
+        at _runTestsForDescribeBlock (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:121:9)
+        at run (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\run.js:71:3)
+        at runAndTransformResultsToJestFormat (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+        at jestAdapter (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+        at runTestInternal (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:367:16)
+        at runTest (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\runTest.js:444:34)
+        at Object.worker (D:\sporthawk_mobile_clone-fix-manage-account-auth\node_modules\jest-runner\build\testWorker.js:106:12)
+
+    [0m [90m 691 |[39m     [36mreturn[39m updateInvitationsData[33m;[39m
+     [90m 692 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 693 |[39m     console[33m.[39merror([32m'error in updateHandGestrue'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 694 |[39m     [36mthrow[39m error[33m;[39m
+     [90m 695 |[39m   }
+     [90m 696 |[39m }[33m;[39m[0m
+
+      at getUpdateEventInvitationHandGestures (features/event/api/event.ts:693:13)
+      at Object.<anonymous> (tests/event/getUpdateEventInvitationHandGestures.test.ts:610:43)
+
+FAIL tests/event/getUpdateEventInvitationHandGestures.test.ts (29.488 s)
+  getUpdateEventInvitationHandGestures API
+    ΓêÜ getUpdateEventInvitationHandGestures_WhenValidInput_ReturnsSuccess 
+(273 ms)
+    ΓêÜ getUpdateEventInvitationHandGestures_WhenEventIdIsNull_ReturnsFailure 
+(1053 ms)
+    ΓêÜ getUpdateEventInvitationHandGestures_WhenEventIdIsEmpty_ReturnsFailure 
+(11 ms)
+    ΓêÜ getUpdateEventInvitationHandGestures_WhenUserIdIsNull_ReturnsFailure 
+(34 ms)
+    ΓêÜ getUpdateEventInvitationHandGestures_WhenUserIdIsEmpty_ReturnsFailure 
+(17 ms)
+    ΓêÜ 
+getUpdateEventInvitationHandGestures_WhenResponseIsYes_UpdatesToAccepted (1 ms)
+    ΓêÜ 
+getUpdateEventInvitationHandGestures_WhenResponseIsNo_UpdatesToDeclined (1 ms)
+    ΓêÜ 
+getUpdateEventInvitationHandGestures_WhenResponseIsMaybe_UpdatesToMaybe (1 ms)
+    ΓêÜ getUpdateEventInvitationHandGestures_WhenDatabaseError_ReturnsFailure 
+(111 ms)
+    ΓêÜ getUpdateEventInvitationHandGestures_UpdatesInvitedAtTimestamp (4 ms)
+    ├ù getUpdateEventInvitationHandGestures_WhenEventIdDoesNotExist_ShouldFail 
+(285 ms)
+    ├ù getUpdateEventInvitationHandGestures_WhenUserIdDoesNotExist_ShouldFail 
+(33 ms)
+
+  ΓùÅ getUpdateEventInvitationHandGestures API ΓÇ║ 
+getUpdateEventInvitationHandGestures_WhenEventIdDoesNotExist_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "23503",
+    -   "message": StringContaining "foreign key constraint",
+    - }
+    + [TypeError: 
+supabase_1.supabase.from(...).update(...).eq(...).eq(...).select is not a 
+function]
+
+    [0m [90m 576 |[39m         teamId[33m:[39m mockTeamId[33m,[39m
+     [90m 577 |[39m       })
+    [31m[1m>[22m[39m[90m 578 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 579 |[39m       message[33m:[39m 
+expect[33m.[39mstringContaining([32m'foreign key 
+constraint'[39m)[33m,[39m
+     [90m 580 |[39m       code[33m:[39m [32m'23503'[39m[33m,[39m
+     [90m 581 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> 
+(tests/event/getUpdateEventInvitationHandGestures.test.ts:578:15)
+
+  ΓùÅ getUpdateEventInvitationHandGestures API ΓÇ║ 
+getUpdateEventInvitationHandGestures_WhenUserIdDoesNotExist_ShouldFail
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Object {
+    -   "code": "23503",
+    -   "message": StringContaining "foreign key constraint",
+    - }
+    + [TypeError: 
+supabase_1.supabase.from(...).update(...).eq(...).eq(...).select is not a 
+function]
+
+    [0m [90m 614 |[39m         teamId[33m:[39m mockTeamId[33m,[39m
+     [90m 615 |[39m       })
+    [31m[1m>[22m[39m[90m 616 |[39m     
+)[33m.[39mrejects[33m.[39mtoMatchObject({
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 617 |[39m       message[33m:[39m 
+expect[33m.[39mstringContaining([32m'foreign key 
+constraint'[39m)[33m,[39m
+     [90m 618 |[39m       code[33m:[39m [32m'23503'[39m[33m,[39m
+     [90m 619 |[39m     })[33m;[39m[0m
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> 
+(tests/event/getUpdateEventInvitationHandGestures.test.ts:616:15)
+
+FAIL tests/event/getUpdateEventInvitationHandGesture.test.ts
+  ΓùÅ Test suite failed to run
+
+    [96mtests/event/getUpdateEventInvitationHandGesture.test.ts[0m:[93m564[
+0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ id: 
+string; eventId: string; userId: string; response: "yes"; }' is not assignable 
+to parameter of type 'UpdateEventInvitationHandGestureType'.
+      Type '{ id: string; eventId: string; userId: string; response: "yes"; }' 
+is missing the following properties from type 
+'UpdateEventInvitationHandGestureType': preResponse, teamId
+
+    [7m564[0m       getUpdateEventInvitationHandGesture({
+    [7m   [0m [91m                                          ~[0m
+    [7m565[0m         id: mockId,
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~[0m
+    [7m...[0m 
+    [7m568[0m         response: 'yes',
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m569[0m       })
+    [7m   [0m [91m~~~~~~~[0m
+    [96mtests/event/getUpdateEventInvitationHandGesture.test.ts[0m:[93m605[
+0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ id: 
+string; eventId: string; userId: string; response: "yes"; }' is not assignable 
+to parameter of type 'UpdateEventInvitationHandGestureType'.
+      Type '{ id: string; eventId: string; userId: string; response: "yes"; }' 
+is missing the following properties from type 
+'UpdateEventInvitationHandGestureType': preResponse, teamId
+
+    [7m605[0m       getUpdateEventInvitationHandGesture({
+    [7m   [0m [91m                                          ~[0m
+    [7m606[0m         id: mockId,
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~[0m
+    [7m...[0m 
+    [7m609[0m         response: 'yes',
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m610[0m       })
+    [7m   [0m [91m~~~~~~~[0m
+    [96mtests/event/getUpdateEventInvitationHandGesture.test.ts[0m:[93m653[
+0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ id: 
+string; eventId: string; userId: string; response: "yes"; }' is not assignable 
+to parameter of type 'UpdateEventInvitationHandGestureType'.
+      Type '{ id: string; eventId: string; userId: string; response: "yes"; }' 
+is missing the following properties from type 
+'UpdateEventInvitationHandGestureType': preResponse, teamId
+
+    [7m653[0m       getUpdateEventInvitationHandGesture({
+    [7m   [0m [91m                                          ~[0m
+    [7m654[0m         id: mockId,
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~[0m
+    [7m...[0m 
+    [7m657[0m         response: 'yes',
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m658[0m       })
+    [7m   [0m [91m~~~~~~~[0m
+
+FAIL tests/event/getUpsertEventsquad.test.ts
+  ΓùÅ Test suite failed to run
+
+    [96mtests/event/getUpsertEventsquad.test.ts[0m:[93m900[0m:[93m21[0m 
+- [91merror[0m[90m TS2552: [0mCannot find name 'mockUserId1'. Did you mean 
+'mockUserId'?
+
+    [7m900[0m         addMember: [mockUserId1],
+    [7m   [0m [91m                    ~~~~~~~~~~~[0m
+
+      [96mtests/event/getUpsertEventsquad.test.ts[0m:[93m37[0m:[93m9[0m
+        [7m37[0m   const mockUserId = 'user-123';
+        [7m  [0m [96m        ~~~~~~~~~~[0m
+        'mockUserId' is declared here.
+
+Test Suites: 7 failed, 10 passed, 17 total
+Tests:       11 failed, 1 skipped, 149 passed, 161 total
+Snapshots:   0 total
+Time:        42.406 s
+Ran all test suites matching /tests\\event/i.

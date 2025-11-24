@@ -1,0 +1,27 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@top/*": ["*"],
+      "@ass/*": ["assets/*"],
+      "@app/*": ["app/*"],
+      "@cmp/*": ["components/*"],
+      "@con/*": ["constants/*"],
+      "@ico/*": ["assets/icons/*"],
+      "@ict/*": ["assets/icons_teaser/*"],
+      "@ico_pt/*": ["assets/icons_pre_teaser/*"],
+      "@icx/*": ["assets/icons/icons_export_2025-06-07/*"],
+      "@icx_pt/*": ["assets/icons_pre_teaser/icons_export_2025-06-07/*"],
+      "@img/*": ["assets/images/*"],
+      "@ctx/*": ["contexts/*"],
+      "@hks/*": ["hooks/*"],
+      "@lib/*": ["lib/*"],
+      "@api/*": ["lib/api/*"],
+      "@typ/*": ["types/*"],
+      "@sto/*": ["stores/*"],
+      "@vid/*": ["assets/video/*"]
+    }
+  }
+}

@@ -1,0 +1,1 @@
+export { ShHeroImageSection } from './ShHeroImageSection';

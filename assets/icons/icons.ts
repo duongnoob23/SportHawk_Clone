@@ -1,0 +1,15 @@
+export const logoAndIcons = {
+  logo: require('@img/sporthawk-logo.png'),
+  bell: require('@ico/bell.png'),
+  google: require('@ico/google.png'),
+  heart: require('@ico/heart.png'),
+  home: require('@ico/home.png'),
+  key: require('@ico/key.png'),
+  'location-pin': require('@ico/location-pin.png'),
+  'padlock-unlocked': require('@ico/padlock-unlocked.png'),
+  'person-fill': require('@ico/person-fill.png'),
+  'person-outline': require('@ico/person-outline.png'),
+  'scenery-outline': require('@ico/scenery-outline.png'),
+  tick: require('@ico/tick.png'),
+  'verify-email': require('@ico/verify-email.svg'),
+} as const;

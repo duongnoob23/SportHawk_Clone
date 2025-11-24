@@ -1,0 +1,1 @@
+export { ShSearchMembers } from './ShSearchMembers';

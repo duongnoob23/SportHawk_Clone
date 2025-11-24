@@ -1,0 +1,1 @@
+export { ShAvatar } from './ShAvatar';
