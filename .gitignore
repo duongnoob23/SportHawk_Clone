@@ -35,6 +35,12 @@ yarn-error.*
 
 .env
 
+# Secrets and credentials
+supabase/functions/service-account.json
+**/service-account.json
+**/*.key
+**/*.pem
+
 # typescript
 *.tsbuildinfo
 
