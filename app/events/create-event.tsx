@@ -336,6 +336,9 @@ export default function CreateEventScreen() {
         pre_match_message: formData.preMatchMessage || null,
       };
 
+      console.log('eventData', JSON.stringify(eventData, null, 2));
+      console.log('user', user.id);
+
       const eventRequestId = await createEvent(eventData, user.id);
       const addMember =
         formData.invitationMembers

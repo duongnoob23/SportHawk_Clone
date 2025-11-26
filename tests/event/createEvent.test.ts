@@ -6,7 +6,7 @@
  * Phương thức: createEvent()
  *
  * Test Cases:
- * 1. createEvent_WhenValidInput_ReturnsSuccess
+ * 1. createEvent_WhenValidInput_ReturnsSuccess 
  * 2. createEvent_WhenTeamIdIsNull_ReturnsFailure
  * 3. createEvent_WhenTitleIsEmpty_ReturnsFailure
  * 4. createEvent_WhenEventDateIsInvalid_ReturnsFailure
@@ -71,7 +71,7 @@ describe('createEvent API', () => {
 
   /**
    * Test Case 1: createEvent_WhenValidInput_ReturnsSuccess
-   *
+   * 
    * STT: 1
    * Chức năng: Tạo event mới
    * Test case: createEvent_WhenValidInput_ReturnsSuccess

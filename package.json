@@ -12,7 +12,9 @@
     "test:coverage": "jest --coverage --verbose",
     "test:event": "jest tests/event --verbose",
     "test:coverage:event": "jest tests/event --coverage --verbose",
-    "test:teams": "jest tests/teams --verbose"
+    "test:teams": "jest tests/teams --verbose",
+    "test:real-db": "jest tests/TestRealDatabase --verbose",
+    "test:real-db:watch": "jest tests/TestRealDatabase --watch --verbose"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",

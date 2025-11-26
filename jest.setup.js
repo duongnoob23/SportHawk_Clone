@@ -10,6 +10,6 @@ jest.mock('@supabase/supabase-js', () => ({
 jest.mock('react-native', () => ({
   Platform: {
     OS: 'ios',
-    select: jest.fn((obj) => obj.ios),
+    select: jest.fn(obj => obj.ios),
   },
 }));
