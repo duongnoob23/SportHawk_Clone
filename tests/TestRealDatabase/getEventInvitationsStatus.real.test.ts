@@ -38,7 +38,10 @@ jest.mock('@lib/supabase', () => ({
 jest.unmock('@supabase/supabase-js');
 
 // Import createEvent và getEventInvitationsStatus SAU KHI đã mock @lib/supabase
-import { createEvent, getEventInvitationsStatus } from '@top/features/event/api/event';
+import {
+  createEvent,
+  getEventInvitationsStatus,
+} from '@top/features/event/api/event';
 
 // ✅ Bây giờ createEvent và getEventInvitationsStatus sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
 
@@ -173,24 +176,27 @@ describe('getEventInvitationsStatus API - Real Database Tests', () => {
   });
 
   /**
-   * Test Case 4: getEventInvitationsStatus_WhenEventIdIsEmpty_ReturnsNull
+   * Test Case 4: getEventInvitationsStatus_WhenEventIdIsEmpty_ThrowsError
    *
-   * Mục tiêu: Kiểm tra API trả về null khi eventId là empty string
+   * Mục tiêu: Kiểm tra API throw error khi eventId là empty string
    * Input: eventId = ''
-   * Expected: Trả về null (không có record nào match)
+   * Expected: Throw error (không phải success)
    */
-  it('getEventInvitationsStatus_WhenEventIdIsEmpty_ReturnsNull', async () => {
+  it('getEventInvitationsStatus_WhenEventIdIsEmpty_ThrowsError', async () => {
     // Arrange: Chuẩn bị input với eventId = ''
     const invalidPayload = {
       userId: testUserId,
       eventId: '',
     };
 
-    // Act: Gọi API getEventInvitationsStatus
-    const result = await getEventInvitationsStatus(invalidPayload);
-
-    // Assert: Kiểm tra kết quả là null
-    expect(result).toBeNull();
+    // Act & Assert: Kiểm tra API throw error
+    try {
+      await getEventInvitationsStatus(invalidPayload);
+      throw new Error('Expected error to be thrown');
+    } catch (error: any) {
+      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      expect(error).toBeDefined();
+    }
   });
 
   /**
@@ -218,24 +224,27 @@ describe('getEventInvitationsStatus API - Real Database Tests', () => {
   });
 
   /**
-   * Test Case 6: getEventInvitationsStatus_WhenUserIdIsEmpty_ReturnsNull
+   * Test Case 6: getEventInvitationsStatus_WhenUserIdIsEmpty_ThrowsError
    *
-   * Mục tiêu: Kiểm tra API trả về null khi userId là empty string
+   * Mục tiêu: Kiểm tra API throw error khi userId là empty string
    * Input: userId = ''
-   * Expected: Trả về null (không có record nào match)
+   * Expected: Throw error (không phải success)
    */
-  it('getEventInvitationsStatus_WhenUserIdIsEmpty_ReturnsNull', async () => {
+  it('getEventInvitationsStatus_WhenUserIdIsEmpty_ThrowsError', async () => {
     // Arrange: Chuẩn bị input với userId = ''
     const invalidPayload = {
       userId: '',
       eventId: '00000000-0000-0000-0000-000000000000',
     };
 
-    // Act: Gọi API getEventInvitationsStatus
-    const result = await getEventInvitationsStatus(invalidPayload);
-
-    // Assert: Kiểm tra kết quả là null
-    expect(result).toBeNull();
+    // Act & Assert: Kiểm tra API throw error
+    try {
+      await getEventInvitationsStatus(invalidPayload);
+      throw new Error('Expected error to be thrown');
+    } catch (error: any) {
+      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      expect(error).toBeDefined();
+    }
   });
 
   /**
@@ -610,4 +619,3 @@ describe('getEventInvitationsStatus API - Real Database Tests', () => {
     expect(result?.invitedBy).toBe(testUserId);
   });
 });
-

@@ -205,27 +205,37 @@ export async function getExistingTestData(): Promise<{
   teamId: string;
   userId: string;
 }> {
-  const { data: team } = await testSupabase
+  // ✅ Sửa: Không dùng .single() vì nó throw error nếu không có data
+  // Thay vào đó dùng .limit(1) và kiểm tra data
+  const { data: teams, error: teamError } = await testSupabase
     .from('teams')
     .select('id')
-    .limit(1)
-    .single();
+    .limit(1);
 
-  const { data: user } = await testSupabase
+  const { data: users, error: userError } = await testSupabase
     .from('profiles')
     .select('id')
-    .limit(1)
-    .single();
+    .limit(1);
 
-  if (!team || !user) {
+  // Kiểm tra lỗi hoặc không có data
+  if (teamError || !teams || teams.length === 0) {
     throw new Error(
-      '❌ No existing team or user found in database.\n' +
-        'Please ensure database has at least one team and one user.'
+      '❌ No existing team found in database.\n' +
+        'Please ensure database has at least one team.\n' +
+        `Error: ${teamError?.message || 'No teams found'}`
+    );
+  }
+
+  if (userError || !users || users.length === 0) {
+    throw new Error(
+      '❌ No existing user found in database.\n' +
+        'Please ensure database has at least one user.\n' +
+        `Error: ${userError?.message || 'No users found'}`
     );
   }
 
   return {
-    teamId: team.id,
-    userId: user.id,
+    teamId: teams[0].id,
+    userId: users[0].id,
   };
 }
