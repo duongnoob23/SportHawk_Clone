@@ -1,4 +1,5 @@
 import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import { Database } from '@typ/database';
 
@@ -33,7 +34,8 @@ export const clubsApi = {
     } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('clubs')
       .insert({
         ...club,
@@ -41,12 +43,12 @@ export const clubsApi = {
         is_active: true,
       })
       .select()
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data
 
     if (error) throw error;
 
     // Automatically add the creator as the primary admin
-    const { error: adminError } = await supabase.from('club_admins').insert({
+    const { error: adminError } = await client.from('club_admins').insert({
       club_id: data.id,
       user_id: user.id,
       role: 'admin',
@@ -83,7 +85,8 @@ export const clubsApi = {
   },
 
   async deleteClub(id: string) {
-    const { error } = await supabase.from('clubs').delete().eq('id', id);
+    const client = getSupabaseClient();
+    const { error } = await client.from('clubs').delete().eq('id', id);
 
     if (error) throw error;
   },

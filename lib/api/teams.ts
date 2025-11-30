@@ -1,4 +1,6 @@
 import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
+import { getAuthUser } from '@lib/utils/get-auth-user';
 import { logger } from '@lib/utils/logger';
 import { Database } from '@typ/database';
 
@@ -32,9 +34,7 @@ export const teamsApi = {
     >,
     coachId?: string
   ) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
     // Create the team
@@ -53,7 +53,8 @@ export const teamsApi = {
 
     // If coach is specified, add them as team admin
     if (coachId && newTeam) {
-      const { error: adminError } = await supabase.from('team_admins').insert({
+      const client = getSupabaseClient();
+      const { error: adminError } = await client.from('team_admins').insert({
         team_id: newTeam.id,
         user_id: coachId,
         role: 'coach',
@@ -71,7 +72,8 @@ export const teamsApi = {
   },
 
   async getTeam(id: string) {
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('teams')
       .select(
         `
@@ -80,26 +82,28 @@ export const teamsApi = {
       `
       )
       .eq('id', id)
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data
 
     if (error) throw error;
     return data;
   },
 
   async updateTeam(id: string, updates: TeamUpdate) {
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('teams')
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data
 
     if (error) throw error;
     return data;
   },
 
   async deleteTeam(id: string) {
-    const { error } = await supabase
+    const client = getSupabaseClient();
+    const { error } = await client
       .from('teams')
       .update({ is_active: false })
       .eq('id', id);
@@ -108,7 +112,8 @@ export const teamsApi = {
   },
 
   async listTeamsByClub(clubId: string) {
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('teams')
       .select('*')
       .eq('club_id', clubId)
@@ -223,12 +228,11 @@ export const teamsApi = {
   },
 
   async addTeamAdmin(teamId: string, userId: string, role: string = 'coach') {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('team_admins')
       .insert({
         team_id: teamId,
@@ -237,14 +241,15 @@ export const teamsApi = {
         assigned_by: user.id,
       })
       .select()
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data
 
     if (error) throw error;
     return data;
   },
 
   async removeTeamAdmin(teamId: string, userId: string) {
-    const { error } = await supabase
+    const client = getSupabaseClient();
+    const { error } = await client
       .from('team_admins')
       .delete()
       .eq('team_id', teamId)
@@ -287,17 +292,16 @@ export const teamsApi = {
   },
 
   async checkTeamAdmin(teamId: string) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) return false;
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('team_admins')
       .select('id')
       .eq('team_id', teamId)
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data
 
     return !error && !!data;
   },
@@ -305,15 +309,16 @@ export const teamsApi = {
   async getTeamAdminDashboard(teamId: string) {
     const team = await this.getTeam(teamId);
 
+    const client = getSupabaseClient();
     // Get member count
-    const { count: membersCount } = await supabase
+    const { count: membersCount } = await client
       .from('team_members')
       .select('*', { count: 'exact', head: true })
       .eq('team_id', teamId)
       .eq('member_status', 'active');
 
     // Get upcoming events count
-    const { count: eventsCount } = await supabase
+    const { count: eventsCount } = await client
       .from('events')
       .select('*', { count: 'exact', head: true })
       .eq('team_id', teamId)
@@ -321,14 +326,14 @@ export const teamsApi = {
       .eq('event_status', 'scheduled');
 
     // Get pending payments count
-    const { count: paymentsCount } = await supabase
+    const { count: paymentsCount } = await client
       .from('payment_requests')
       .select('*', { count: 'exact', head: true })
       .eq('team_id', teamId)
       .eq('status', 'pending');
 
     // Get unread alerts count
-    const { count: alertsCount } = await supabase
+    const { count: alertsCount } = await client
       .from('team_alerts')
       .select('*', { count: 'exact', head: true })
       .eq('team_id', teamId)
@@ -346,8 +351,9 @@ export const teamsApi = {
   },
 
   async getTeamSectionSummaries(teamId: string) {
+    const client = getSupabaseClient();
     // Get recent events
-    const { data: events } = await supabase
+    const { data: events } = await client
       .from('events')
       .select('*')
       .eq('team_id', teamId)
@@ -357,7 +363,7 @@ export const teamsApi = {
       .limit(3);
 
     // Get recent payment requests
-    const { data: payments } = await supabase
+    const { data: payments } = await client
       .from('payment_requests')
       .select('*')
       .eq('team_id', teamId)
@@ -366,7 +372,7 @@ export const teamsApi = {
       .limit(3);
 
     // Get recent members
-    const { data: members } = await supabase
+    const { data: members } = await client
       .from('team_members')
       .select(
         `
@@ -384,7 +390,7 @@ export const teamsApi = {
       .limit(3);
 
     // Get recent alerts
-    const { data: alerts } = await supabase
+    const { data: alerts } = await client
       .from('team_alerts')
       .select('*')
       .eq('team_id', teamId)
@@ -411,9 +417,7 @@ export const teamsApi = {
   },
 
   async addTeamMembers(teamId: string, userIds: string[]) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
     // Prepare member records
@@ -424,8 +428,9 @@ export const teamsApi = {
       added_by: user.id,
     }));
 
+    const client = getSupabaseClient();
     // Insert members
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('team_members')
       .insert(memberRecords)
       .select();
@@ -443,9 +448,7 @@ export const teamsApi = {
       message?: string;
     }[]
   ) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
     // Prepare invitation records
@@ -459,8 +462,9 @@ export const teamsApi = {
       status: 'pending',
     }));
 
+    const client = getSupabaseClient();
     // Insert invitations
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('team_invitations')
       .insert(invitationRecords)
       .select();
@@ -494,8 +498,9 @@ export const teamsApi = {
       sortOrder = 'asc',
     } = options || {};
 
+    const client = getSupabaseClient();
     // Step 1: Fetch team admins (managers, coaches) - no FK to profiles
-    const { data: admins, error: adminsError } = await supabase
+    const { data: admins, error: adminsError } = await client
       .from('team_admins')
       .select('*')
       .eq('team_id', teamId);
@@ -506,7 +511,7 @@ export const teamsApi = {
     }
 
     // Step 2: Fetch team members - no FK to profiles, no role column
-    let membersQuery = supabase
+    let membersQuery = client
       .from('team_members')
       .select('*', { count: 'exact' })
       .eq('team_id', teamId)
@@ -542,7 +547,7 @@ export const teamsApi = {
 
     let profiles: any[] = [];
     if (allUserIds.size > 0) {
-      const { data: profileData, error: profilesError } = await supabase
+      const { data: profileData, error: profilesError } = await client
         .from('profiles')
         .select('id, first_name, last_name, profile_photo_uri')
         .in('id', Array.from(allUserIds));
@@ -669,9 +674,7 @@ export const teamsApi = {
   },
 
   async updateMemberRole(teamId: string, memberId: string, newRole: string) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
     // Note: team_members table doesn't have a role column
@@ -687,12 +690,11 @@ export const teamsApi = {
   },
 
   async removeTeamMember(teamId: string, memberId: string) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { error: updateError } = await supabase
+    const client = getSupabaseClient();
+    const { error: updateError } = await client
       .from('team_members')
       .update({
         member_status: 'inactive',
@@ -701,7 +703,7 @@ export const teamsApi = {
       .eq('team_id', teamId)
       .eq('user_id', memberId);
 
-    const { error: updateStatusError } = await supabase
+    const { error: updateStatusError } = await client
       .from('interest_expressions')
       .update({
         responded_at: null,
@@ -724,12 +726,11 @@ export const teamsApi = {
     memberIds: string[],
     newRole: string
   ) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('team_members')
       .update({
         role: newRole,
@@ -744,12 +745,11 @@ export const teamsApi = {
   },
 
   async bulkRemoveTeamMembers(teamId: string, memberIds: string[]) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { error: updateError } = await supabase
+    const client = getSupabaseClient();
+    const { error: updateError } = await client
       .from('team_members')
       .update({
         member_status: 'inactive',
@@ -998,31 +998,30 @@ export const teamsApi = {
     }
 
     // Get user auth status to determine visibility
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     let userRole: 'public' | 'member' | 'admin' = 'public';
 
+    const client = getSupabaseClient();
     if (user) {
       // Check if user is a team admin
-      const { data: adminCheck } = await supabase
+      const { data: adminCheck } = await client
         .from('team_admins')
         .select('id')
         .eq('team_id', id)
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (adminCheck) {
         userRole = 'admin';
       } else {
         // Check if user is a team member
-        const { data: memberCheck } = await supabase
+        const { data: memberCheck } = await client
           .from('team_members')
           .select('id')
           .eq('team_id', id)
           .eq('user_id', user.id)
           .eq('member_status', 'active')
-          .single();
+          .maybeSingle(); // Use maybeSingle() to handle no data
 
         if (memberCheck) {
           userRole = 'member';
@@ -1069,13 +1068,12 @@ export const teamsApi = {
   },
 
   async expressInterestInTeam(teamId: string, adminId: string) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User must be logged in to express interest');
 
+    const client = getSupabaseClient();
     // Check if user has already expressed interest
-    const { data: existing, error: errorExisting } = await supabase
+    const { data: existing, error: errorExisting } = await client
       .from('interest_expressions')
       .select('*')
       .eq('team_id', teamId)
@@ -1092,7 +1090,7 @@ export const teamsApi = {
     }
 
     if (!existing) {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('interest_expressions')
         .insert({
           team_id: teamId,
@@ -1101,14 +1099,14 @@ export const teamsApi = {
           expressed_at: new Date().toISOString(),
         })
         .select()
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (error) {
         console.error('Error insert interest_expressions');
         throw error;
       }
     } else {
-      const { error: updateInterestError } = await supabase
+      const { error: updateInterestError } = await client
         .from('interest_expressions')
         .update({
           responded_at: null,
@@ -1214,15 +1212,14 @@ export const teamsApi = {
   // Check if user has pending interest expression for a team
   async checkInterestStatus(teamId: string) {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getAuthUser();
       if (!user) {
         return { hasPending: false };
       }
 
+      const client = getSupabaseClient();
       // Check for pending interest expression
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('interest_expressions')
         .select('id, interest_status')
         .eq('team_id', teamId)
@@ -1251,7 +1248,8 @@ export const teamsApi = {
   // Search team members with query
   async searchTeamMembers(teamId: string, query: string) {
     try {
-      const { data: members, error } = await supabase
+      const client = getSupabaseClient();
+      const { data: members, error } = await client
         .from('team_members')
         .select(
           `
@@ -1281,7 +1279,8 @@ export const teamsApi = {
   // Get count of pending interest expressions
   async getPendingInterestCount(teamId: string) {
     try {
-      const { count, error } = await supabase
+      const client = getSupabaseClient();
+      const { count, error } = await client
         .from('interest_expressions')
         .select('*', { count: 'exact', head: true })
         .eq('team_id', teamId)
@@ -1298,7 +1297,8 @@ export const teamsApi = {
   // Get all pending interest expressions with user details
   async getInterestExpressions(teamId: string) {
     try {
-      const { data: expressions, error } = await supabase
+      const client = getSupabaseClient();
+      const { data: expressions, error } = await client
         .from('interest_expressions')
         .select(
           `
@@ -1327,14 +1327,13 @@ export const teamsApi = {
   // Accept an interest expression and add member to team
   async acceptInterestExpression1(teamId: string, userId: string) {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getAuthUser();
       if (!user) throw new Error('User not authenticated');
 
+      const client = getSupabaseClient();
       // Start transaction by using multiple operations
       // 1. Add user to team_members if not already there
-      const { error: memberError } = await supabase.from('team_members').upsert(
+      const { error: memberError } = await client.from('team_members').upsert(
         {
           team_id: teamId,
           user_id: userId,
@@ -1349,7 +1348,7 @@ export const teamsApi = {
       if (memberError) throw memberError;
 
       // 2. Update interest status to accepted
-      const { error: updateError } = await supabase
+      const { error: updateError } = await client
         .from('interest_expressions')
         .update({ interest_status: 'accepted' })
         .eq('team_id', teamId)
@@ -1358,21 +1357,19 @@ export const teamsApi = {
       if (updateError) throw updateError;
 
       // 3. Create notification for accepted user
-      const { data: team } = await supabase
+      const { data: team } = await client
         .from('teams')
         .select('team_name')
         .eq('id', teamId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          notification_type: 'team_membership',
-          title: 'Team Membership Accepted',
-          message: `You have been accepted to team ${team?.team_name || 'the team'}`,
-          data: { team_id: teamId, action: 'accepted' },
-        });
+      const { error: notifError } = await client.from('notifications').insert({
+        user_id: userId,
+        notification_type: 'team_membership',
+        title: 'Team Membership Accepted',
+        message: `You have been accepted to team ${team?.team_name || 'the team'}`,
+        data: { team_id: teamId, action: 'accepted' },
+      });
 
       if (notifError) {
         logger.error('Error creating notification:', notifError);
@@ -1388,8 +1385,9 @@ export const teamsApi = {
   // Decline an interest expression
   async ignoreInterestExpression(teamId: string, userId: string) {
     try {
+      const client = getSupabaseClient();
       // Update interest status to declined
-      const { error: updateError } = await supabase
+      const { error: updateError } = await client
         .from('interest_expressions')
         .update({ interest_status: 'declined' })
         .eq('team_id', teamId)
@@ -1404,7 +1402,7 @@ export const teamsApi = {
             error: updateError,
           });
 
-          const { error: deleteError } = await supabase
+          const { error: deleteError } = await client
             .from('interest_expressions')
             .delete()
             .eq('team_id', teamId)
@@ -1418,21 +1416,19 @@ export const teamsApi = {
       }
 
       // Create notification for declined user
-      const { data: team } = await supabase
+      const { data: team } = await client
         .from('teams')
         .select('team_name')
         .eq('id', teamId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          notification_type: 'team_membership',
-          title: 'Team Request Update',
-          message: `Your request to join ${team?.team_name || 'the team'} was not accepted`,
-          data: { team_id: teamId, action: 'declined' },
-        });
+      const { error: notifError } = await client.from('notifications').insert({
+        user_id: userId,
+        notification_type: 'team_membership',
+        title: 'Team Request Update',
+        message: `Your request to join ${team?.team_name || 'the team'} was not accepted`,
+        data: { team_id: teamId, action: 'declined' },
+      });
 
       if (notifError) {
         logger.error('Error creating notification:', notifError);
@@ -1448,13 +1444,12 @@ export const teamsApi = {
   // Invite a player to the team
   async invitePlayer(teamId: string, userId: string) {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getAuthUser();
       if (!user) throw new Error('User not authenticated');
 
+      const client = getSupabaseClient();
       // Create an invitation (interest_expression with invited status)
-      const { error: inviteError } = await supabase
+      const { error: inviteError } = await client
         .from('interest_expressions')
         .insert({
           team_id: teamId,
@@ -1466,21 +1461,19 @@ export const teamsApi = {
       if (inviteError) throw inviteError;
 
       // Create notification for invited user
-      const { data: team } = await supabase
+      const { data: team } = await client
         .from('teams')
         .select('team_name')
         .eq('id', teamId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          notification_type: 'team_membership',
-          title: 'Team Invitation',
-          message: `You have been invited to join ${team?.team_name || 'a team'}`,
-          data: { team_id: teamId, action: 'invited' },
-        });
+      const { error: notifError } = await client.from('notifications').insert({
+        user_id: userId,
+        notification_type: 'team_membership',
+        title: 'Team Invitation',
+        message: `You have been invited to join ${team?.team_name || 'a team'}`,
+        data: { team_id: teamId, action: 'invited' },
+      });
 
       if (notifError) {
         logger.error('Error creating notification:', notifError);
@@ -1496,7 +1489,8 @@ export const teamsApi = {
   // Check if user is a Super Admin (has is_primary = true)
   async checkSuperAdmin(teamId: string, userId: string) {
     try {
-      const { data: admin, error } = await supabase
+      const client = getSupabaseClient();
+      const { data: admin, error } = await client
         .from('team_admins')
         .select('is_primary')
         .eq('team_id', teamId)
@@ -1576,25 +1570,24 @@ export const teamsApi = {
     role: string = 'Manager'
   ) {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getAuthUser();
       if (!user) throw new Error('User not authenticated');
 
+      const client = getSupabaseClient();
       // Check if user is already an admin
-      const { data: existingAdmin } = await supabase
+      const { data: existingAdmin } = await client
         .from('team_admins')
         .select('id')
         .eq('team_id', teamId)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (existingAdmin) {
         throw new Error('User is already an admin');
       }
 
       // Add to team_admins
-      const { error: adminError } = await supabase.from('team_admins').insert({
+      const { error: adminError } = await client.from('team_admins').insert({
         team_id: teamId,
         user_id: userId,
         role: role,
@@ -1642,9 +1635,10 @@ export const teamsApi = {
     try {
       logger.log('ADM-002: Starting getInterestExpressions', { teamId });
 
+      const client = getSupabaseClient();
       // Step 1: Get interest expressions WITHOUT trying to join auth.users
       logger.log('ADM-002: Step 1 - Fetching interest expressions', { teamId });
-      const { data: expressions, error: expressionsError } = await supabase
+      const { data: expressions, error: expressionsError } = await client
         .from('interest_expressions')
         .select('*')
         .eq('team_id', teamId)
@@ -1810,26 +1804,25 @@ export const teamsApi = {
     try {
       logger.log('ADM-002: Accepting interest expression', { teamId, userId });
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getAuthUser();
 
       if (!user) {
         throw new Error('User not authenticated');
       }
 
+      const client = getSupabaseClient();
       // Start transaction-like operations
       // 1. Check if user is already a member
-      const { data: existingMember } = await supabase
+      const { data: existingMember } = await client
         .from('team_members')
         .select('id')
         .eq('team_id', teamId)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (!existingMember) {
         // 2. Add user to team_members
-        const { error: memberError } = await supabase
+        const { error: memberError } = await client
           .from('team_members')
           .insert({
             team_id: teamId,
@@ -1847,7 +1840,7 @@ export const teamsApi = {
           throw memberError;
         }
       } else {
-        const { error: memberError } = await supabase
+        const { error: memberError } = await client
           .from('team_members')
           .update({
             member_status: 'active',
@@ -1868,7 +1861,7 @@ export const teamsApi = {
       }
 
       // 3. Update interest_expressions status
-      const { error: updateError } = await supabase
+      const { error: updateError } = await client
         .from('interest_expressions')
         .update({
           interest_status: 'accepted',
@@ -1889,15 +1882,13 @@ export const teamsApi = {
       }
 
       // 4. Create notification for accepted user
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          notification_type: 'team_membership',
-          title: 'Team Membership Accepted',
-          message: `You have been accepted to team ${teamName}`,
-          data: { team_id: teamId, action: 'accepted' },
-        });
+      const { error: notifError } = await client.from('notifications').insert({
+        user_id: userId,
+        notification_type: 'team_membership',
+        title: 'Team Membership Accepted',
+        message: `You have been accepted to team ${teamName}`,
+        data: { team_id: teamId, action: 'accepted' },
+      });
 
       if (notifError) {
         logger.warn('ADM-002: Notification skipped due to RLS', {
@@ -1933,16 +1924,15 @@ export const teamsApi = {
     try {
       logger.log('ADM-002: Declining interest expression', { teamId, userId });
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getAuthUser();
 
       if (!user) {
         throw new Error('User not authenticated');
       }
 
+      const client = getSupabaseClient();
       // 1. Update interest_expressions status
-      const { error: updateError } = await supabase
+      const { error: updateError } = await client
         .from('interest_expressions')
         .update({
           interest_status: 'declined',
@@ -1961,7 +1951,7 @@ export const teamsApi = {
             updateError,
           });
 
-          const { error: deleteError } = await supabase
+          const { error: deleteError } = await client
             .from('interest_expressions')
             .delete()
             .eq('team_id', teamId)
@@ -1987,15 +1977,13 @@ export const teamsApi = {
       }
 
       // 2. Create notification for declined user
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          notification_type: 'team_membership',
-          title: 'Team Request Update',
-          message: `Your request to join ${teamName} was not accepted`,
-          data: { team_id: teamId, action: 'declined' },
-        });
+      const { error: notifError } = await client.from('notifications').insert({
+        user_id: userId,
+        notification_type: 'team_membership',
+        title: 'Team Request Update',
+        message: `Your request to join ${teamName} was not accepted`,
+        data: { team_id: teamId, action: 'declined' },
+      });
 
       if (notifError) {
         logger.warn('ADM-002: Notification skipped due to RLS', {
@@ -2101,13 +2089,14 @@ export const teamsApi = {
     try {
       logger.log('ADM-002: Inviting player to team', { teamId, userId });
 
+      const client = getSupabaseClient();
       // Check if invitation already exists
-      const { data: existing } = await supabase
+      const { data: existing } = await client
         .from('interest_expressions')
         .select('id, interest_status')
         .eq('team_id', teamId)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (existing) {
         logger.warn('ADM-002: Player already has interest expression', {
@@ -2119,7 +2108,7 @@ export const teamsApi = {
       }
 
       // Create invitation
-      const { error: insertError } = await supabase
+      const { error: insertError } = await client
         .from('interest_expressions')
         .insert({
           team_id: teamId,
@@ -2139,15 +2128,13 @@ export const teamsApi = {
       }
 
       // Create notification for invited user
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          notification_type: 'team_membership',
-          title: 'Team Invitation',
-          message: `You have been invited to join ${teamName}`,
-          data: { team_id: teamId, action: 'invited' },
-        });
+      const { error: notifError } = await client.from('notifications').insert({
+        user_id: userId,
+        notification_type: 'team_membership',
+        title: 'Team Invitation',
+        message: `You have been invited to join ${teamName}`,
+        data: { team_id: teamId, action: 'invited' },
+      });
 
       if (notifError) {
         logger.warn('ADM-002: Notification skipped due to RLS', {
@@ -2317,25 +2304,26 @@ export const teamsApi = {
         role,
       });
 
+      const client = getSupabaseClient();
       // First verify user is a team member
-      const { data: member } = await supabase
+      const { data: member } = await client
         .from('team_members')
         .select('user_id')
         .eq('team_id', teamId)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (!member) {
         throw new Error('User is not a team member');
       }
 
       // Check if already admin
-      const { data: existingAdmin } = await supabase
+      const { data: existingAdmin } = await client
         .from('team_admins')
         .select('user_id')
         .eq('team_id', teamId)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (existingAdmin) {
         logger.warn('ADM-003: User already admin', {
@@ -2346,7 +2334,7 @@ export const teamsApi = {
       }
 
       // Add as admin
-      const { error: adminError } = await supabase.from('team_admins').insert({
+      const { error: adminError } = await client.from('team_admins').insert({
         team_id: teamId,
         user_id: userId,
         role,
@@ -2403,8 +2391,9 @@ export const teamsApi = {
     try {
       logger.log('ADM-003: Removing team admin', { teamId, userId });
 
+      const client = getSupabaseClient();
       // First remove from team_admins
-      const { error: removeError } = await supabase
+      const { error: removeError } = await client
         .from('team_admins')
         .delete()
         .eq('team_id', teamId)
@@ -2420,15 +2409,13 @@ export const teamsApi = {
       }
 
       // Create notification
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          notification_type: 'admin_change',
-          title: 'Admin Role Removed',
-          message: `You have been removed as admin from ${teamName}`,
-          data: { team_id: teamId, action: 'removed' },
-        });
+      const { error: notifError } = await client.from('notifications').insert({
+        user_id: userId,
+        notification_type: 'admin_change',
+        title: 'Admin Role Removed',
+        message: `You have been removed as admin from ${teamName}`,
+        data: { team_id: teamId, action: 'removed' },
+      });
 
       if (notifError) {
         logger.error('ADM-003: Error creating notification', { notifError });

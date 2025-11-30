@@ -1,10 +1,13 @@
 import { supabase } from "@top/lib/supabase";
+import { getSupabaseClient } from "@top/lib/supabase-dev";
+import { getAuthUser } from "@top/lib/utils/get-auth-user";
 
 
 
 export const getInterestExpressionsPendingCount = async (teamId: string) =>  {
     try {
-      const { count, error } = await supabase
+      const client = getSupabaseClient();
+      const { count, error } = await client
         .from('interest_expressions')
         .select('*', { count: 'exact', head: true })
         .eq('team_id', teamId)
@@ -20,7 +23,8 @@ export const getInterestExpressionsPendingCount = async (teamId: string) =>  {
 
 export const getInterestExpressionsPending =async (teamId: string) =>  {
       try {
-        const { data: expressions, error } = await supabase
+        const client = getSupabaseClient();
+        const { data: expressions, error } = await client
           .from('interest_expressions')
           .select(
             `
@@ -52,24 +56,22 @@ export const getAcceptInterestExpression =async (
   ) => {
     try {
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
+      const user = await getAuthUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
+      const client = getSupabaseClient();
       // 1. Check if user is already a member
-      const { data: existingMember } = await supabase
+      const { data: existingMember } = await client
         .from('team_members')
         .select('id')
         .eq('team_id', teamId)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (!existingMember) {
         // 2. Add user to team_members
-        const { error: memberError } = await supabase
+        const { error: memberError } = await client
           .from('team_members')
           .insert({
             team_id: teamId,
@@ -83,7 +85,7 @@ export const getAcceptInterestExpression =async (
           throw memberError;
         }
       } else {
-        const { error: memberError } = await supabase
+        const { error: memberError } = await client
           .from('team_members')
           .update({
             member_status: 'active',
@@ -100,7 +102,7 @@ export const getAcceptInterestExpression =async (
       }
 
       // 3. Update interest_expressions status
-      const { error: updateError } = await supabase
+      const { error: updateError } = await client
         .from('interest_expressions')
         .update({
           interest_status: 'accepted',
@@ -117,7 +119,7 @@ export const getAcceptInterestExpression =async (
       }
 
       // 4. Create notification for accepted user
-      const { error: notifError } = await supabase
+      const { error: notifError } = await client
         .from('notifications')
         .insert({
           user_id: userId,
@@ -143,14 +145,13 @@ export const getIgnoreInterestExpression = async (
       teamName: string
     ) => {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const user = await getAuthUser();
         if (!user) {
           throw new Error('User not authenticated');
         }
+        const client = getSupabaseClient();
         // 1. Update interest_expressions status
-        const { error: updateError } = await supabase
+        const { error: updateError } = await client
           .from('interest_expressions')
           .update({
             interest_status: 'declined',
@@ -163,7 +164,7 @@ export const getIgnoreInterestExpression = async (
   
         if (updateError) {
           if (updateError.code === '23514') {
-            const { error: deleteError } = await supabase
+            const { error: deleteError } = await client
               .from('interest_expressions')
               .delete()
               .eq('team_id', teamId)
@@ -180,7 +181,7 @@ export const getIgnoreInterestExpression = async (
           }
         }
         // 2. Create notification for declined user
-        const { error: notifError } = await supabase
+        const { error: notifError } = await client
           .from('notifications')
           .insert({
             user_id: userId,
@@ -202,12 +203,11 @@ export const getIgnoreInterestExpression = async (
     }
 
 export const getInsertExpressInterestInTeam =async (teamId: string) =>  {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User must be logged in to express interest');
 
-    const { data: existing, error: errorExisting } = await supabase
+    const client = getSupabaseClient();
+    const { data: existing, error: errorExisting } = await client
       .from('interest_expressions')
       .select('*')
       .eq('team_id', teamId)
@@ -224,7 +224,7 @@ export const getInsertExpressInterestInTeam =async (teamId: string) =>  {
     }
 
     if (!existing) {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('interest_expressions')
         .insert({
           team_id: teamId,
@@ -233,14 +233,14 @@ export const getInsertExpressInterestInTeam =async (teamId: string) =>  {
           expressed_at: new Date().toISOString(),
         })
         .select()
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (error) {
         console.error('Error insert interest_expressions');
         throw error;
       }
     } else {
-      const { error: updateInterestError } = await supabase
+      const { error: updateInterestError } = await client
         .from('interest_expressions')
         .update({
           responded_at: null,
@@ -259,7 +259,8 @@ export const getInsertExpressInterestInTeam =async (teamId: string) =>  {
 
 export const getInterestStatusPending = async (teamId: string,userId:string) =>  {
       try {
-        const { data, error } = await supabase
+        const client = getSupabaseClient();
+        const { data, error } = await client
           .from('interest_expressions')
           .select('id, interest_status')
           .eq('team_id', teamId)

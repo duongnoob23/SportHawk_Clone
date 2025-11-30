@@ -1,9 +1,12 @@
 import { supabase } from "@top/lib/supabase";
+import { getSupabaseClient } from "@top/lib/supabase-dev";
+import { getAuthUser } from "@top/lib/utils/get-auth-user";
 import { TeamMemberData } from "../types";
 
 export const getTeamMembers = async (teamId: string): Promise<TeamMemberData[]> => {
   try {
-    const { data: teamMemberData, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: teamMemberData, error } = await client
       .from('team_members')
       .select(`
         id,
@@ -42,12 +45,11 @@ export const getTeamMembers = async (teamId: string): Promise<TeamMemberData[]> 
 
 export const removeTeamMember =async (teamId: string, memberId: string) =>  {
    try{
-        const {
-        data: { user },
-        } = await supabase.auth.getUser();
+        const user = await getAuthUser();
         if (!user) throw new Error('User not authenticated');
 
-        const { error: updateError } = await supabase
+        const client = getSupabaseClient();
+        const { error: updateError } = await client
         .from('team_members')
         .update({
             member_status: 'inactive',
@@ -56,7 +58,7 @@ export const removeTeamMember =async (teamId: string, memberId: string) =>  {
         .eq('team_id', teamId)
         .eq('user_id', memberId);
 
-        const { error: updateStatusError } = await supabase
+        const { error: updateStatusError } = await client
         .from('interest_expressions')
         .update({
             responded_at: null,
@@ -80,9 +82,10 @@ export const removeTeamMember =async (teamId: string, memberId: string) =>  {
 
 export const searchNonMembers =async (teamId: string, query: string) => {
     try {
+      const client = getSupabaseClient();
       const trimmedQuery = query?.trim() ?? '';
       // Get current team member IDs to exclude
-      const { data: teamMembers, error: membersError } = await supabase
+      const { data: teamMembers, error: membersError } = await client
         .from('team_members')
         .select('user_id')
         .eq('team_id', teamId);
@@ -92,7 +95,7 @@ export const searchNonMembers =async (teamId: string, query: string) => {
         throw membersError;
       }
       const memberIds = teamMembers?.map(member => member.user_id) ?? [];
-      let searchQuery = supabase
+      let searchQuery = client
         .from('profiles')
         .select(
           `
@@ -146,9 +149,7 @@ export const searchNonMembers =async (teamId: string, query: string) => {
   }
 
 export const addTeamMembers =async (teamId: string, userIds: string) =>  {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthUser();
     if (!user) throw new Error('User not authenticated');
 
     // Prepare member records
@@ -159,8 +160,9 @@ export const addTeamMembers =async (teamId: string, userIds: string) =>  {
       added_by: user.id,
     };
 
+    const client = getSupabaseClient();
     // Insert members
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('team_members')
       .insert(memberRecords)
       .select();
