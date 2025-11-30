@@ -42,3 +42,6 @@ supabase/functions/service-account.json
 
 android
 ios
+
+
+.env.*
