@@ -1126,8 +1126,9 @@ export const teamsApi = {
   // Simple helper for edit-squad screen - gets flat list of members with profiles
   async getTeamMembersSimple(teamId: string) {
     try {
+      const client = getSupabaseClient();
       // Get team members
-      const { data: members, error: membersError } = await supabase
+      const { data: members, error: membersError } = await client
         .from('team_members')
         .select('*')
         .eq('team_id', teamId)
@@ -1138,7 +1139,7 @@ export const teamsApi = {
 
       // Get profiles for all members
       const userIds = members.map(m => m.user_id);
-      const { data: profiles, error: profilesError } = await supabase
+      const { data: profiles, error: profilesError } = await client
         .from('profiles')
         .select('id, first_name, last_name, profile_photo_uri')
         .in('id', userIds);

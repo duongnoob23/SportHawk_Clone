@@ -106,13 +106,7 @@ export const getPaymentRequestsWithMembers = async (paymentId: string) => {
             amountPaidPence:amount_pence,
             paidAt:paid_at,
             createdAt:created_at,
-            updatedAt:updated_at,
-            profiles (
-              id,
-              firstName:first_name,
-              lastName:last_name,
-              profilePhotoURI:profile_photo_uri
-            )
+            updatedAt:updated_at
           )
         `
       )
@@ -122,6 +116,33 @@ export const getPaymentRequestsWithMembers = async (paymentId: string) => {
     if (error) {
       throw error;
     }
+
+    // Fetch profiles separately for payment request members since there's no FK relationship
+    if (data?.paymentRequestMembers && data.paymentRequestMembers.length > 0) {
+      const userIds = data.paymentRequestMembers.map(m => m.userId);
+      const { data: profiles, error: profilesError } = await client
+        .from('profiles')
+        .select('id, first_name, last_name, profile_photo_uri')
+        .in('id', userIds);
+
+      if (!profilesError && profiles) {
+        const profileMap = new Map(
+          profiles.map(p => [p.id, {
+            id: p.id,
+            firstName: p.first_name,
+            lastName: p.last_name,
+            profilePhotoURI: p.profile_photo_uri,
+          }])
+        );
+
+        // Attach profiles to payment request members
+        data.paymentRequestMembers = data.paymentRequestMembers.map(member => ({
+          ...member,
+          profiles: profileMap.get(member.userId) || null,
+        }));
+      }
+    }
+
     return data;
   } catch (error) {
     logger.error('Error in getPaymentRequestsWithMembers:', error);
@@ -133,9 +154,8 @@ export const createPaymentRequest = async (
   data: CreatePaymentRequestData
 ): Promise<PaymentRequest> => {
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { getAuthUser } = await import('@top/lib/utils/get-auth-user');
+    const user = await getAuthUser();
     if (!user) {
       throw new Error('User not authenticated');
     }
