@@ -1,4 +1,5 @@
 import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import {
   DeliveryMethod,
@@ -16,7 +17,8 @@ export async function getNotificationTemplate(
   trigger: string
 ): Promise<NotificationTemplate | null> {
   try {
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('notification_templates')
       .select(
         `
@@ -36,7 +38,7 @@ export async function getNotificationTemplate(
       )
       .eq('trigger', trigger)
       .eq('is_active', true)
-      .single<NotificationTemplate>();
+      .maybeSingle<NotificationTemplate>(); // Use maybeSingle() to handle no data (fixes PGRST116)
 
     if (error) {
       logger.error('Failed to fetch notification template:', error);
@@ -118,7 +120,8 @@ export async function getInsertNotificationFromTemplate(
       variables
     );
     // Insert into notifications table with camelCase aliases
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('notifications')
       .insert({
         user_id: userId,
@@ -154,7 +157,7 @@ export async function getInsertNotificationFromTemplate(
         expiresAt:expires_at
       `
       )
-      .single<NotificationRecord>();
+      .maybeSingle<NotificationRecord>(); // Use maybeSingle() to handle no data
 
     if (error) {
       logger.error('Failed to create notification:', error);
@@ -199,7 +202,8 @@ export async function getInsertNotification(
     expires_at: input.expiresAt ?? null,
   };
 
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('notifications')
     .insert(payload)
     .select(
@@ -223,7 +227,7 @@ export async function getInsertNotification(
       expiresAt:expires_at
     `
     )
-    .single<NotificationRecord>();
+    .maybeSingle<NotificationRecord>(); // Use maybeSingle() to handle no data
 
   if (error) throw error;
   return data;
@@ -236,7 +240,8 @@ export async function getUserNotifications(
   userId: string,
   limit: number = 50
 ): Promise<NotificationRecord[]> {
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('notifications')
     .select(
       `
@@ -273,7 +278,8 @@ export async function getUserNotifications(
 export async function markNotificationAsRead(
   notificationId: string
 ): Promise<void> {
-  const { error } = await supabase
+  const client = getSupabaseClient();
+  const { error } = await client
     .from('notifications')
     .update({
       is_read: true,

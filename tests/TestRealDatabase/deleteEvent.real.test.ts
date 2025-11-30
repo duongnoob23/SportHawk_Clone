@@ -1,7 +1,7 @@
 /**
  * Test Suite: deleteEvent API với Database Thật
  *
- * ⚠️ QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
+ *  QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
  *
  * Mục đích:
  * - Kiểm tra API hoạt động đúng với database thật
@@ -19,7 +19,7 @@
  * - Sử dụng cleanupEvent() để xóa event và data liên quan
  */
 
-// ✅ QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
+//  QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
 // Sau đó mock @lib/supabase để trả về testSupabase thay vì supabase từ lib
 import {
   cleanupEvent,
@@ -27,20 +27,20 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
-// ✅ Mock @lib/supabase để thay thế supabase bằng testSupabase
+//  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)
 jest.mock('@lib/supabase', () => ({
   supabase: testSupabase,
 }));
 
-// ✅ Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
+//  Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
 jest.unmock('@supabase/supabase-js');
 
 // Import deleteEvent và createEvent SAU KHI đã mock @lib/supabase
 import { createEvent, deleteEvent } from '@top/features/event/api/event';
 
-// ✅ Bây giờ deleteEvent và createEvent sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
+//  Bây giờ deleteEvent và createEvent sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
 
 describe('deleteEvent API - Real Database Tests', () => {
   // Test data - sẽ được setup từ database thật
@@ -71,10 +71,10 @@ describe('deleteEvent API - Real Database Tests', () => {
    * Expected: Event được update với event_status = 'cancelled', cancelled_reason, cancelled_at, cancelled_by được set đúng
    *
    * Điểm khác với mock test:
-   * - ✅ Tạo event thật trước, sau đó delete (cancel) event đó
-   * - ✅ Kiểm tra event thực sự được update trong database
-   * - ✅ Kiểm tra data trong database khớp với expected values
-   * - ✅ Phát hiện lỗi thực tế nếu có (constraints, foreign keys)
+   * -  Tạo event thật trước, sau đó delete (cancel) event đó
+   * -  Kiểm tra event thực sự được update trong database
+   * -  Kiểm tra data trong database khớp với expected values
+   * -  Phát hiện lỗi thực tế nếu có (constraints, foreign keys)
    */
   it('deleteEvent_WhenValidInput_ReturnsSuccess', async () => {
     // Arrange: Tạo event trước để test delete
@@ -92,7 +92,7 @@ describe('deleteEvent API - Real Database Tests', () => {
     const eventId = await createEvent(eventData, testUserId);
     createdEventIds.push(eventId);
 
-    // ✅ Kiểm tra event được tạo với status 'active'
+    //  Kiểm tra event được tạo với status 'active'
     const { data: eventBeforeDelete } = await testSupabase
       .from('events')
       .select('*')
@@ -123,7 +123,7 @@ describe('deleteEvent API - Real Database Tests', () => {
     expect(result.cancelled_by).toBe(testUserId);
     expect(result.cancelled_at).toBeDefined();
 
-    // ✅ Kiểm tra cancelled_at là timestamp hợp lệ và gần với thời điểm hiện tại
+    //  Kiểm tra cancelled_at là timestamp hợp lệ và gần với thời điểm hiện tại
     const cancelledAt = new Date(result.cancelled_at);
     expect(cancelledAt.getTime()).toBeGreaterThanOrEqual(
       new Date(beforeDeleteTime).getTime()
@@ -132,7 +132,7 @@ describe('deleteEvent API - Real Database Tests', () => {
       new Date().getTime() + 5000
     ); // Cho phép sai lệch 5 giây
 
-    // ✅ QUAN TRỌNG: Kiểm tra event thực sự được update trong database
+    //  QUAN TRỌNG: Kiểm tra event thực sự được update trong database
     const { data: eventAfterDelete, error: fetchError } = await testSupabase
       .from('events')
       .select('*')
@@ -187,7 +187,7 @@ describe('deleteEvent API - Real Database Tests', () => {
    * Input: DeleteEventData với eventId = null/undefined
    * Expected: Throw error (validation error hoặc database error)
    *
-   * ⚠️ QUAN TRỌNG: API nên validate eventId là required
+   *  QUAN TRỌNG: API nên validate eventId là required
    */
   it('deleteEvent_WhenEventIdIsNull_ThrowsError', async () => {
     // Arrange: Chuẩn bị input với eventId = undefined
@@ -254,7 +254,7 @@ describe('deleteEvent API - Real Database Tests', () => {
    * Input: DeleteEventData với userId = null/undefined
    * Expected: Throw error (database constraint error - cancelled_by NOT NULL)
    *
-   * ⚠️ QUAN TRỌNG: Database có constraint cancelled_by NOT NULL
+   *  QUAN TRỌNG: Database có constraint cancelled_by NOT NULL
    */
   it('deleteEvent_WhenUserIdIsNull_ThrowsError', async () => {
     // Arrange: Tạo event trước
@@ -424,7 +424,7 @@ describe('deleteEvent API - Real Database Tests', () => {
     expect(result.cancelled_reason).toBe('Cancel Event'); // Default value
     expect(result.cancelled_by).toBe(testUserId);
 
-    // ✅ Kiểm tra event trong database có cancelled_reason = 'Cancel Event'
+    //  Kiểm tra event trong database có cancelled_reason = 'Cancel Event'
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')
@@ -472,7 +472,7 @@ describe('deleteEvent API - Real Database Tests', () => {
     expect(result.cancelled_reason).toBe('Cancel Event'); // Default value (empty string is falsy)
     expect(result.cancelled_by).toBe(testUserId);
 
-    // ✅ Kiểm tra event trong database có cancelled_reason = 'Cancel Event'
+    //  Kiểm tra event trong database có cancelled_reason = 'Cancel Event'
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')
@@ -525,7 +525,7 @@ describe('deleteEvent API - Real Database Tests', () => {
       new Date(afterDeleteTime).getTime() + 1000
     ); // Cho phép sai lệch 1 giây
 
-    // ✅ Kiểm tra event trong database có cancelled_at đúng
+    //  Kiểm tra event trong database có cancelled_at đúng
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')
@@ -569,7 +569,7 @@ describe('deleteEvent API - Real Database Tests', () => {
     // Assert: Kiểm tra cancelled_by = userId
     expect(result.cancelled_by).toBe(testUserId);
 
-    // ✅ Kiểm tra event trong database có cancelled_by = userId
+    //  Kiểm tra event trong database có cancelled_by = userId
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')
@@ -631,14 +631,14 @@ describe('deleteEvent API - Real Database Tests', () => {
     expect(secondResult.cancelled_reason).toBe(secondReason); // Reason mới
     expect(secondResult.cancelled_by).toBe(testUserId);
 
-    // ✅ Kiểm tra cancelled_at được update lại (timestamp mới)
+    //  Kiểm tra cancelled_at được update lại (timestamp mới)
     const secondCancelledAt = new Date(secondResult.cancelled_at);
     const firstCancelledAtDate = new Date(firstCancelledAt);
     expect(secondCancelledAt.getTime()).toBeGreaterThan(
       firstCancelledAtDate.getTime()
     );
 
-    // ✅ Kiểm tra event trong database có data mới
+    //  Kiểm tra event trong database có data mới
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')

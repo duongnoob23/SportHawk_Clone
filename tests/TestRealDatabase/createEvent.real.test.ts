@@ -1,7 +1,7 @@
 /**
  * Test Suite: createEvent API với Database Thật
  *
- * ⚠️ QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
+ *  QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
  *
  * Mục đích:
  * - Kiểm tra API hoạt động đúng với database thật
@@ -19,7 +19,7 @@
  * - Sử dụng cleanupEvent() để xóa event và data liên quan
  */
 
-// ✅ QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
+//  QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
 // Sau đó mock @lib/supabase để trả về testSupabase thay vì supabase từ lib
 import {
   cleanupEvent,
@@ -28,20 +28,20 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
-// ✅ Mock @lib/supabase để thay thế supabase bằng testSupabase
+//  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)
 jest.mock('@lib/supabase', () => ({
   supabase: testSupabase,
 }));
 
-// ✅ Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
+//  Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
 jest.unmock('@supabase/supabase-js');
 
 // Import createEvent SAU KHI đã mock @lib/supabase
 import { createEvent } from '@top/features/event/api/event';
 
-// ✅ Bây giờ createEvent sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
+//  Bây giờ createEvent sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
 
 describe('createEvent API - Real Database Tests', () => {
   // Test data - sẽ được setup từ database thật
@@ -72,10 +72,10 @@ describe('createEvent API - Real Database Tests', () => {
    * Expected: Trả về event ID và event được tạo trong database
    *
    * Điểm khác với mock test:
-   * - ✅ Kiểm tra event thực sự được tạo trong database
-   * - ✅ Kiểm tra data trong database khớp với input
-   * - ✅ Phát hiện lỗi thực tế nếu có (constraints, foreign keys)
-   * - ✅ Sử dụng dữ liệu thực tế từ app (format time, selected_members, selected_leaders)
+   * -  Kiểm tra event thực sự được tạo trong database
+   * -  Kiểm tra data trong database khớp với input
+   * -  Phát hiện lỗi thực tế nếu có (constraints, foreign keys)
+   * -  Sử dụng dữ liệu thực tế từ app (format time, selected_members, selected_leaders)
    */
   it('createEvent_WhenValidInput_ReturnsSuccess', async () => {
     // Arrange: Chuẩn bị input hợp lệ - sử dụng dữ liệu thực tế từ terminal
@@ -97,7 +97,7 @@ describe('createEvent API - Real Database Tests', () => {
       is_home_event: true,
       notes:
         'Kit Color: Red and blue \nMeet: 14:00\nAnswer by: 26/11/2025 22:45',
-      // ✅ QUAN TRỌNG: selected_members và selected_leaders là mảng user IDs
+      //  QUAN TRỌNG: selected_members và selected_leaders là mảng user IDs
       selected_members: [
         '9be842ee-72ff-4d3d-92e0-6805a89d6243',
         'a5c4e217-5418-4fd5-b286-e15dc94947ef',
@@ -117,7 +117,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(typeof eventId).toBe('string');
     expect(eventId.length).toBeGreaterThan(0);
 
-    // ✅ QUAN TRỌNG: Kiểm tra event thực sự tồn tại trong database
+    //  QUAN TRỌNG: Kiểm tra event thực sự tồn tại trong database
     const { data: eventInDb, error: fetchError } = await testSupabase
       .from('events')
       .select('*')
@@ -143,7 +143,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(eventInDb?.is_home_event).toBe(true);
     expect(eventInDb?.description).toBe('Yaaa hoo!');
 
-    // ✅ QUAN TRỌNG: Kiểm tra invitations thực sự được tạo cho members
+    //  QUAN TRỌNG: Kiểm tra invitations thực sự được tạo cho members
     const { data: memberInvitations, error: memberInvError } =
       await testSupabase
         .from('event_invitations')
@@ -155,7 +155,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(memberInvitations).toBeDefined();
     expect(memberInvitations?.length).toBe(4); // 4 members
 
-    // ✅ Kiểm tra mỗi member có invitation với status 'pending'
+    //  Kiểm tra mỗi member có invitation với status 'pending'
     for (const memberId of validEventData.selected_members) {
       const memberInv = memberInvitations?.find(
         inv => inv.user_id === memberId
@@ -164,7 +164,7 @@ describe('createEvent API - Real Database Tests', () => {
       expect(memberInv?.invitation_status).toBe('pending');
     }
 
-    // ✅ QUAN TRỌNG: Kiểm tra invitations thực sự được tạo cho leaders
+    //  QUAN TRỌNG: Kiểm tra invitations thực sự được tạo cho leaders
     const { data: leaderInvitations, error: leaderInvError } =
       await testSupabase
         .from('event_invitations')
@@ -176,14 +176,14 @@ describe('createEvent API - Real Database Tests', () => {
     expect(leaderInvitations).toBeDefined();
     expect(leaderInvitations?.length).toBe(1); // 1 leader
 
-    // ✅ Kiểm tra leader có invitation với status 'pending'
+    //  Kiểm tra leader có invitation với status 'pending'
     const leaderInv = leaderInvitations?.find(
       inv => inv.user_id === validEventData.selected_leaders[0]
     );
     expect(leaderInv).toBeDefined();
     expect(leaderInv?.invitation_status).toBe('pending');
 
-    // ✅ QUAN TRỌNG: Kiểm tra event_participants được tạo cho members (role: 'player')
+    //  QUAN TRỌNG: Kiểm tra event_participants được tạo cho members (role: 'player')
     const { data: memberParticipants, error: memberPartError } =
       await testSupabase
         .from('event_participants')
@@ -196,7 +196,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(memberParticipants).toBeDefined();
     expect(memberParticipants?.length).toBe(4); // 4 members với role 'player'
 
-    // ✅ Kiểm tra event_participants được tạo cho leaders (role: 'coach')
+    //  Kiểm tra event_participants được tạo cho leaders (role: 'coach')
     const { data: leaderParticipants, error: leaderPartError } =
       await testSupabase
         .from('event_participants')
@@ -233,7 +233,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Act & Assert: Kiểm tra API throw error thực tế từ database
     await expect(createEvent(invalidEventData, testUserId)).rejects.toThrow();
 
-    // ✅ Kiểm tra error có chứa thông tin về foreign key constraint
+    //  Kiểm tra error có chứa thông tin về foreign key constraint
     try {
       await createEvent(invalidEventData, testUserId);
       fail('Expected error to be thrown');
@@ -266,7 +266,7 @@ describe('createEvent API - Real Database Tests', () => {
       event_type: 'home_match',
       event_date: '2025-12-25',
       start_time: '16:00',
-      end_time: '14:00', // ❌ end_time < start_time
+      end_time: '14:00', //  end_time < start_time
       location_name: 'Test Stadium',
       event_status: 'active',
     };
@@ -274,7 +274,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Act & Assert: Kiểm tra API throw error thực tế từ database
     await expect(createEvent(invalidEventData, testUserId)).rejects.toThrow();
 
-    // ✅ Kiểm tra error có chứa thông tin về CHECK constraint
+    //  Kiểm tra error có chứa thông tin về CHECK constraint
     try {
       await createEvent(invalidEventData, testUserId);
       fail('Expected error to be thrown');
@@ -303,7 +303,7 @@ describe('createEvent API - Real Database Tests', () => {
     const invalidEventData = {
       team_id: testTeamId,
       title: 'Test Event',
-      event_type: 'invalid_type', // ❌ Không có trong CHECK constraint
+      event_type: 'invalid_type', //  Không có trong CHECK constraint
       event_date: '2025-12-25',
       start_time: '14:00',
       end_time: '16:00',
@@ -314,7 +314,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Act & Assert: Kiểm tra API throw error thực tế
     await expect(createEvent(invalidEventData, testUserId)).rejects.toThrow();
 
-    // ✅ Kiểm tra error có chứa thông tin về CHECK constraint
+    //  Kiểm tra error có chứa thông tin về CHECK constraint
     try {
       await createEvent(invalidEventData, testUserId);
       fail('Expected error to be thrown');
@@ -347,13 +347,13 @@ describe('createEvent API - Real Database Tests', () => {
       start_time: '14:00',
       end_time: '16:00',
       location_name: 'Test Stadium',
-      event_status: 'scheduled', // ❌ Không có trong CHECK constraint (chỉ có: active, cancelled, completed)
+      event_status: 'scheduled', //  Không có trong CHECK constraint (chỉ có: active, cancelled, completed)
     };
 
     // Act & Assert: Kiểm tra API throw error thực tế
     await expect(createEvent(invalidEventData, testUserId)).rejects.toThrow();
 
-    // ✅ Kiểm tra error có chứa thông tin về CHECK constraint
+    //  Kiểm tra error có chứa thông tin về CHECK constraint
     try {
       await createEvent(invalidEventData, testUserId);
       fail('Expected error to be thrown');
@@ -376,7 +376,7 @@ describe('createEvent API - Real Database Tests', () => {
    * Input: CreateEventData với title = ''
    * Expected: Throw error (validation error - title là required field)
    *
-   * ⚠️ QUAN TRỌNG: API nên validate title là required
+   *  QUAN TRỌNG: API nên validate title là required
    * Nếu API không validate (bug), event sẽ được tạo và test này sẽ fail
    * Test này phát hiện bug: API không validate title
    */
@@ -384,7 +384,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Arrange: Chuẩn bị input với title empty
     const invalidEventData = {
       team_id: testTeamId,
-      title: '', // ❌ Empty string - API nên validate và throw error
+      title: '', //  Empty string - API nên validate và throw error
       event_type: 'home_match',
       event_date: '2025-12-25',
       start_time: '14:00',
@@ -398,13 +398,13 @@ describe('createEvent API - Real Database Tests', () => {
     // Act & Assert: Kiểm tra API throw error (validation error)
     try {
       eventId = await createEvent(invalidEventData, testUserId);
-      // ❌ BUG: API không validate title, event được tạo (không nên)
+      //  BUG: API không validate title, event được tạo (không nên)
       // Test này fail để phát hiện bug
       fail(
-        '❌ BUG DETECTED: API should validate title is required, but event was created with empty title'
+        ' BUG DETECTED: API should validate title is required, but event was created with empty title'
       );
     } catch (error: any) {
-      // ✅ Expected: API throw validation error
+      //  Expected: API throw validation error
       expect(error).toBeDefined();
       // Error có thể là validation error hoặc database error
       const errorStr = JSON.stringify(error).toLowerCase();
@@ -416,11 +416,11 @@ describe('createEvent API - Real Database Tests', () => {
           error.code
       ).toBe(true);
     } finally {
-      // ✅ QUAN TRỌNG: Cleanup nếu event vẫn được tạo (API có bug)
+      //  QUAN TRỌNG: Cleanup nếu event vẫn được tạo (API có bug)
       if (eventId) {
         await cleanupEvent(eventId);
         console.warn(
-          '⚠️ WARNING: Event was created with empty title - API validation bug detected!'
+          ' WARNING: Event was created with empty title - API validation bug detected!'
         );
       } else {
         // Tìm event bằng title (có thể là empty string)
@@ -445,7 +445,7 @@ describe('createEvent API - Real Database Tests', () => {
       team_id: testTeamId,
       title: 'Test Event Invalid Date',
       event_type: 'home_match',
-      event_date: 'invalid-date', // ❌ Invalid date format
+      event_date: 'invalid-date', //  Invalid date format
       start_time: '14:00',
       end_time: '16:00',
       location_name: 'Test Stadium',
@@ -466,7 +466,7 @@ describe('createEvent API - Real Database Tests', () => {
           errorStr.includes('invalid input')
       ).toBe(true);
     } finally {
-      // ✅ QUAN TRỌNG: Cleanup nếu event vẫn được tạo (mặc dù không nên)
+      //  QUAN TRỌNG: Cleanup nếu event vẫn được tạo (mặc dù không nên)
       await findAndCleanupEventByTitle(
         invalidEventData.title,
         invalidEventData.team_id
@@ -481,7 +481,7 @@ describe('createEvent API - Real Database Tests', () => {
    * Input: CreateEventData không có start_time
    * Expected: Throw error (validation error hoặc database error)
    *
-   * ⚠️ QUAN TRỌNG: API nên validate start_time là required
+   *  QUAN TRỌNG: API nên validate start_time là required
    */
   it('createEvent_WhenStartTimeIsMissing_ThrowsError', async () => {
     // Arrange: Chuẩn bị input không có start_time
@@ -490,8 +490,7 @@ describe('createEvent API - Real Database Tests', () => {
       title: 'Test Event Missing Start Time',
       event_type: 'home_match',
       event_date: '2025-12-25',
-      // start_time: missing ❌
-      end_time: '16:00',
+      // start_time: missing       end_time: '16:00',
       location_name: 'Test Stadium',
       event_status: 'active',
     } as any; // Type assertion để bypass TypeScript check
@@ -501,19 +500,19 @@ describe('createEvent API - Real Database Tests', () => {
     // Act & Assert: Kiểm tra API throw error
     try {
       eventId = await createEvent(invalidEventData, testUserId);
-      // ❌ BUG: API không validate start_time, event được tạo (không nên)
+      //  BUG: API không validate start_time, event được tạo (không nên)
       fail(
-        '❌ BUG DETECTED: API should validate start_time is required, but event was created without start_time'
+        ' BUG DETECTED: API should validate start_time is required, but event was created without start_time'
       );
     } catch (error: any) {
-      // ✅ Expected: API throw validation error
+      //  Expected: API throw validation error
       expect(error).toBeDefined();
     } finally {
-      // ✅ QUAN TRỌNG: Cleanup nếu event vẫn được tạo (API có bug)
+      //  QUAN TRỌNG: Cleanup nếu event vẫn được tạo (API có bug)
       if (eventId) {
         await cleanupEvent(eventId);
         console.warn(
-          '⚠️ WARNING: Event was created without start_time - API validation bug detected!'
+          ' WARNING: Event was created without start_time - API validation bug detected!'
         );
       } else {
         await findAndCleanupEventByTitle(
@@ -531,15 +530,14 @@ describe('createEvent API - Real Database Tests', () => {
    * Input: CreateEventData không có event_type
    * Expected: Throw error (validation error hoặc database error)
    *
-   * ⚠️ QUAN TRỌNG: API nên validate event_type là required
+   *  QUAN TRỌNG: API nên validate event_type là required
    */
   it('createEvent_WhenEventTypeIsMissing_ThrowsError', async () => {
     // Arrange: Chuẩn bị input không có event_type
     const invalidEventData = {
       team_id: testTeamId,
       title: 'Test Event Missing Event Type',
-      // event_type: missing ❌
-      event_date: '2025-12-25',
+      // event_type: missing       event_date: '2025-12-25',
       start_time: '14:00',
       end_time: '16:00',
       location_name: 'Test Stadium',
@@ -551,19 +549,19 @@ describe('createEvent API - Real Database Tests', () => {
     // Act & Assert: Kiểm tra API throw error
     try {
       eventId = await createEvent(invalidEventData, testUserId);
-      // ❌ BUG: API không validate event_type, event được tạo (không nên)
+      //  BUG: API không validate event_type, event được tạo (không nên)
       fail(
-        '❌ BUG DETECTED: API should validate event_type is required, but event was created without event_type'
+        ' BUG DETECTED: API should validate event_type is required, but event was created without event_type'
       );
     } catch (error: any) {
-      // ✅ Expected: API throw validation error
+      //  Expected: API throw validation error
       expect(error).toBeDefined();
     } finally {
-      // ✅ QUAN TRỌNG: Cleanup nếu event vẫn được tạo (API có bug)
+      //  QUAN TRỌNG: Cleanup nếu event vẫn được tạo (API có bug)
       if (eventId) {
         await cleanupEvent(eventId);
         console.warn(
-          '⚠️ WARNING: Event was created without event_type - API validation bug detected!'
+          ' WARNING: Event was created without event_type - API validation bug detected!'
         );
       } else {
         await findAndCleanupEventByTitle(
@@ -602,7 +600,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Assert: Kiểm tra event được tạo
     expect(eventId).toBeDefined();
 
-    // ✅ Kiểm tra event tồn tại trong database
+    //  Kiểm tra event tồn tại trong database
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')
@@ -612,7 +610,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(eventInDb).toBeDefined();
     expect(eventInDb?.title).toBe('Test Event Without Members');
 
-    // ✅ Kiểm tra KHÔNG có invitations
+    //  Kiểm tra KHÔNG có invitations
     const { data: invitations } = await testSupabase
       .from('event_invitations')
       .select('*')
@@ -621,7 +619,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(invitations).toBeDefined();
     expect(invitations?.length).toBe(0); // Không có invitations
 
-    // ✅ Kiểm tra KHÔNG có participants
+    //  Kiểm tra KHÔNG có participants
     const { data: participants } = await testSupabase
       .from('event_participants')
       .select('*')
@@ -646,7 +644,7 @@ describe('createEvent API - Real Database Tests', () => {
       .limit(2);
 
     if (!testMembers || testMembers.length < 2) {
-      console.warn('⚠️ Not enough test users. Skipping test.');
+      console.warn(' Not enough test users. Skipping test.');
       return;
     }
 
@@ -672,7 +670,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Assert: Kiểm tra event được tạo
     expect(eventId).toBeDefined();
 
-    // ✅ Kiểm tra invitations cho members
+    //  Kiểm tra invitations cho members
     const { data: invitations } = await testSupabase
       .from('event_invitations')
       .select('*')
@@ -681,7 +679,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(invitations).toBeDefined();
     expect(invitations?.length).toBe(2); // 2 members
 
-    // ✅ Kiểm tra participants với role 'player'
+    //  Kiểm tra participants với role 'player'
     const { data: participants } = await testSupabase
       .from('event_participants')
       .select('*')
@@ -691,7 +689,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(participants).toBeDefined();
     expect(participants?.length).toBe(2); // 2 players
 
-    // ✅ Kiểm tra KHÔNG có participants với role 'coach'
+    //  Kiểm tra KHÔNG có participants với role 'coach'
     const { data: coaches } = await testSupabase
       .from('event_participants')
       .select('*')
@@ -716,7 +714,7 @@ describe('createEvent API - Real Database Tests', () => {
       .limit(1);
 
     if (!testLeaders || testLeaders.length < 1) {
-      console.warn('⚠️ Not enough test users. Skipping test.');
+      console.warn(' Not enough test users. Skipping test.');
       return;
     }
 
@@ -742,7 +740,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Assert: Kiểm tra event được tạo
     expect(eventId).toBeDefined();
 
-    // ✅ Kiểm tra invitations cho leaders
+    //  Kiểm tra invitations cho leaders
     const { data: invitations } = await testSupabase
       .from('event_invitations')
       .select('*')
@@ -751,7 +749,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(invitations).toBeDefined();
     expect(invitations?.length).toBe(1); // 1 leader
 
-    // ✅ Kiểm tra participants với role 'coach'
+    //  Kiểm tra participants với role 'coach'
     const { data: coaches } = await testSupabase
       .from('event_participants')
       .select('*')
@@ -761,7 +759,7 @@ describe('createEvent API - Real Database Tests', () => {
     expect(coaches).toBeDefined();
     expect(coaches?.length).toBe(1); // 1 coach
 
-    // ✅ Kiểm tra KHÔNG có participants với role 'player'
+    //  Kiểm tra KHÔNG có participants với role 'player'
     const { data: players } = await testSupabase
       .from('event_participants')
       .select('*')
@@ -798,7 +796,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Assert: Kiểm tra event được tạo
     expect(eventId).toBeDefined();
 
-    // ✅ Kiểm tra event trong database có end_time = null
+    //  Kiểm tra event trong database có end_time = null
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')
@@ -874,7 +872,7 @@ describe('createEvent API - Real Database Tests', () => {
     // Assert: Kiểm tra event được tạo
     expect(eventId).toBeDefined();
 
-    // ✅ Kiểm tra event trong database
+    //  Kiểm tra event trong database
     const { data: eventInDb } = await testSupabase
       .from('events')
       .select('*')

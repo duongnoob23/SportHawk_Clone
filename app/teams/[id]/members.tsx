@@ -12,7 +12,6 @@ import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 
-
 export type Props = {
   clubDetailsData?: ClubDetailsResponse;
 };
@@ -29,13 +28,13 @@ export default function TeamMembersScreen(clubDetailsData?: Props) {
     return team.teamMembers.map((m: any) => ({
       id: m.id,
       role: m.role || 'member',
-      joinedAt: m.joined_at,
+      joinedAt: m.joinedAt,
       user: {
-        id: m.user_id,
+        id: m.userId,
         name:
-          `${m.profiles?.first_name || ''} ${m.profiles?.last_name || ''}`.trim() ||
+          `${m.profiles?.firstName || ''} ${m.profiles?.lastName || ''}`.trim() ||
           'Unknown',
-        profilePhoto: m.profiles?.profile_photo_uri || '',
+        profilePhoto: m.profiles?.profilePhotoUri || '',
       },
     }));
   }, [clubDetailsData, id]);

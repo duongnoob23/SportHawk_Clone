@@ -1,36 +1,34 @@
 import { ShIcon } from '@cmp/ShIcon';
-import { ShText } from '@cmp/ShText';
 import { colorPalette } from '@con/colors';
 import { IconName } from '@con/icons';
 import { spacing } from '@con/spacing';
-import { ShTextVariant, fontSizes } from '@con/typography';
+import { fontSizes } from '@con/typography';
 import { useUser } from '@hks/useUser';
 import IconBell from '@ict/IconBell';
 import IconBellGray from '@ict/IconBellGray';
-import { Tabs, Redirect } from 'expo-router';
+import { Tabs } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Routes } from '@con/routes';
 
 export default function AppLayout() {
   const { user, authChecked } = useUser();
   const insets = useSafeAreaInsets();
 
-  if (!authChecked) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colorPalette.primaryGold} />
-        <ShText variant={ShTextVariant.Body} style={styles.loadingText}>
-          Loading...
-        </ShText>
-      </View>
-    );
-  }
+  // if (!authChecked) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <ActivityIndicator size="large" color={colorPalette.primaryGold} />
+  //       <ShText variant={ShTextVariant.Body} style={styles.loadingText}>
+  //         Loading...
+  //       </ShText>
+  //     </View>
+  //   );
+  // }
 
-  if (!user?.email_confirmed_at) {
-    return <Redirect href={Routes.Welcome} />;
-  }
+  // if (!user?.email_confirmed_at) {
+  //   return <Redirect href={Routes.Welcome} />;
+  // }
 
   // Show app screens for authenticated users with tab navigation
   return (

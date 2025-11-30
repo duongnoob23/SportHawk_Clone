@@ -1,7 +1,7 @@
 /**
  * Test Suite: getEventEdit API với Database Thật
  *
- * ⚠️ QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
+ *  QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
  *
  * Mục đích:
  * - Kiểm tra API hoạt động đúng với database thật
@@ -19,7 +19,7 @@
  * - Sử dụng cleanupEvent() để xóa event và data liên quan
  */
 
-// ✅ QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
+//  QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
 // Sau đó mock @lib/supabase để trả về testSupabase thay vì supabase từ lib
 import {
   cleanupEvent,
@@ -27,20 +27,20 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
-// ✅ Mock @lib/supabase để thay thế supabase bằng testSupabase
+//  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)
 jest.mock('@lib/supabase', () => ({
   supabase: testSupabase,
 }));
 
-// ✅ Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
+//  Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
 jest.unmock('@supabase/supabase-js');
 
 // Import getEventEdit và createEvent SAU KHI đã mock @lib/supabase
 import { createEvent, getEventEdit } from '@top/features/event/api/event';
 
-// ✅ Bây giờ getEventEdit và createEvent sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
+//  Bây giờ getEventEdit và createEvent sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
 
 describe('getEventEdit API - Real Database Tests', () => {
   // Test data - sẽ được setup từ database thật
@@ -71,10 +71,10 @@ describe('getEventEdit API - Real Database Tests', () => {
    * Expected: Trả về editEventData đầy đủ với tất cả fields
    *
    * Điểm khác với mock test:
-   * - ✅ Tạo event thật trước, sau đó lấy edit data của event đó
-   * - ✅ Kiểm tra data thực sự từ database khớp với expected
-   * - ✅ Kiểm tra tất cả fields được map đúng (snake_case -> camelCase)
-   * - ✅ Phát hiện lỗi thực tế nếu có (constraints, foreign keys)
+   * -  Tạo event thật trước, sau đó lấy edit data của event đó
+   * -  Kiểm tra data thực sự từ database khớp với expected
+   * -  Kiểm tra tất cả fields được map đúng (snake_case -> camelCase)
+   * -  Phát hiện lỗi thực tế nếu có (constraints, foreign keys)
    */
   it('getEventEdit_WhenValidInput_ReturnsSuccess', async () => {
     // Arrange: Tạo event trước với đầy đủ thông tin
@@ -146,7 +146,7 @@ describe('getEventEdit API - Real Database Tests', () => {
       await getEventEdit(nonExistentEventId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không cần kiểm tra chi tiết error message)
+      //  Chỉ cần kiểm tra có error là đủ (không cần kiểm tra chi tiết error message)
       expect(error).toBeDefined();
     }
   });
@@ -167,7 +167,7 @@ describe('getEventEdit API - Real Database Tests', () => {
       await getEventEdit(invalidEventId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ
+      //  Chỉ cần kiểm tra có error là đủ
       expect(error).toBeDefined();
     }
   });
@@ -188,7 +188,7 @@ describe('getEventEdit API - Real Database Tests', () => {
       await getEventEdit(invalidEventId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ
+      //  Chỉ cần kiểm tra có error là đủ
       expect(error).toBeDefined();
     }
   });

@@ -1,4 +1,5 @@
 import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import {
   NotificationTemplate,
@@ -13,7 +14,8 @@ export async function getNotificationTemplate(
   trigger: string
 ): Promise<NotificationTemplate | null> {
   try {
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('notification_templates')
       .select(
         `
@@ -33,14 +35,14 @@ export async function getNotificationTemplate(
       )
       .eq('trigger', trigger)
       .eq('is_active', true)
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data (fixes PGRST116)
 
     if (error) {
       logger.error('Failed to fetch notification template:', error);
       return null;
     }
 
-    return data as NotificationTemplate;
+    return data as NotificationTemplate | null;
   } catch (err) {
     logger.error('Error fetching notification template:', err);
     return null;

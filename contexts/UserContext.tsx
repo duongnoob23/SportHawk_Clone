@@ -2,6 +2,7 @@
 // Wraps the entire app providing single source of truth for auth state
 
 import { useDeviceToken } from '@hks/useDeviceToken';
+import { setFakeUser } from '@lib/utils/get-auth-user';
 import { logger } from '@lib/utils/logger';
 import messaging, {
   FirebaseMessagingTypes,
@@ -87,21 +88,117 @@ export interface UserContextType {
     currentPass?: string,
     newPass?: string
   ) => Promise<UpdateProfileResponse>;
+  switchUser: (toAdmin: boolean) => Promise<void>;
 }
 
 export const UserContext = createContext<UserContextType | null>(null);
 
+// Fake user data for demo (real user from database)
+const FAKE_USER_ID = '887ab40a-f7d0-427d-919e-041a94cac4cd';
+const FAKE_USER_EMAIL = 'kiemthuthietbi5@gmail.com';
+
+// Fake admin user data
+const FAKE_ADMIN_ID = 'f3ee2852-4cf0-45e8-8c71-8480810d45e7';
+const FAKE_ADMIN_EMAIL = 'ashtonsims2004@gmail.com';
+
+const createFakeUser = (): SupabaseUser => {
+  return {
+    id: FAKE_USER_ID,
+    aud: 'authenticated',
+    role: 'authenticated',
+    email: FAKE_USER_EMAIL,
+    email_confirmed_at: '2025-10-14T10:46:02.915Z',
+    phone: undefined,
+    phone_confirmed_at: undefined,
+    confirmed_at: '2025-10-14T10:46:02.915Z',
+    last_sign_in_at: new Date().toISOString(),
+    app_metadata: {
+      provider: 'email',
+      providers: ['email'],
+    },
+    user_metadata: {
+      sub: FAKE_USER_ID,
+      email: FAKE_USER_EMAIL,
+      first_name: 'Dưỡng',
+      last_name: 'Hai',
+      email_verified: true,
+      phone_verified: false,
+    },
+    identities: [],
+    created_at: '2025-10-14T10:45:42.397Z',
+    updated_at: new Date().toISOString(),
+    is_anonymous: false,
+  } as SupabaseUser;
+};
+
+const createFakeAdminUser = (): SupabaseUser => {
+  return {
+    id: FAKE_ADMIN_ID,
+    aud: 'authenticated',
+    role: 'authenticated',
+    email: FAKE_ADMIN_EMAIL,
+    email_confirmed_at: '2025-07-12T10:46:02.915Z',
+    phone: undefined,
+    phone_confirmed_at: undefined,
+    confirmed_at: '2025-07-12T10:46:02.915Z',
+    last_sign_in_at: '2025-11-25T02:25:44.139Z',
+    app_metadata: {
+      provider: 'email',
+      providers: ['email'],
+      is_super_admin: true,
+    },
+    user_metadata: {
+      sub: FAKE_ADMIN_ID,
+      email: FAKE_ADMIN_EMAIL,
+      first_name: 'Ashton',
+      surname: 'Sims',
+      email_verified: true,
+      phone_verified: false,
+    },
+    identities: [],
+    created_at: '2025-07-12T10:45:42.397Z',
+    updated_at: '2025-11-25T02:25:44.147Z',
+    is_anonymous: false,
+    is_super_admin: true,
+  } as SupabaseUser;
+};
+
+const createFakeSession = (user: SupabaseUser): Session => {
+  return {
+    access_token: 'fake-access-token',
+    refresh_token: 'fake-refresh-token',
+    expires_in: 3600,
+    expires_at: Math.floor(Date.now() / 1000) + 3600,
+    token_type: 'bearer',
+    user: user,
+  } as Session;
+};
+
 export function UserProvider({ children }: Readonly<PropsWithChildren>) {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  // Initialize with fake user immediately for demo
+  const [user, setUser] = useState<SupabaseUser | null>(createFakeUser());
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<Session | null>(
+    createFakeSession(createFakeUser())
+  );
   const [loading, setLoading] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
+  const [authChecked, setAuthChecked] = useState(true); // Set to true immediately
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [isVerifyEmail, setIsVerifyEmail] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const isFetchingRef = useRef(false);
   const { registerDeviceToken, deactivateDeviceToken } = useDeviceToken();
+
+  // Set fake user into helper on mount and when user changes
+  useEffect(() => {
+    if (user) {
+      setFakeUser(user);
+      logger.log('UserContext: Fake user set', {
+        userId: user.id,
+        email: user.email,
+      });
+    }
+  }, [user]);
 
   // Fetch user profile from database
   const fetchProfile = useCallback(async (userId: string) => {
@@ -582,9 +679,18 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
     };
   }, []);
 
-  // Set up auth state listener
+  // Set up auth state listener - DISABLED in development mode
   useEffect(() => {
-    // Get initial session
+    // In development, skip real auth checks and keep fake user
+    if (__DEV__) {
+      logger.log(
+        'UserContext: Development mode - using fake user, skipping real auth checks'
+      );
+      setAuthChecked(true);
+      return; // Don't set up auth listeners in dev mode
+    }
+
+    // Production: Get initial session
     (async () => {
       try {
         const {
@@ -599,7 +705,8 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
         setAuthChecked(true);
       }
     })();
-    // Listen for auth state changes
+
+    // Production: Listen for auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event: AuthChangeEvent, currentSession: Session | null) => {
         logger.log('UserContext: Auth state changed:', _event);
@@ -609,7 +716,7 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
           logger.log(
             'UserContext: Skipping auth state handling - password reset in progress'
           );
-          return; // Don't process auth state changes during password reset
+          return;
         }
 
         if (isVerifyEmail) {
@@ -623,7 +730,6 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
             'UserContext: Skipping auth state handling - sign up in progress'
           );
           setIsSignUp(false);
-
           return;
         }
 
@@ -631,8 +737,6 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
           setSession(currentSession);
           setUser(currentSession.user);
 
-          // Ensure device token is registered when user becomes available
-          // But skip during password reset to prevent unwanted navigation
           if (!isResettingPassword) {
             void registerDeviceToken().catch(e =>
               logger.error('Register device token on auth change failed', e)
@@ -653,6 +757,80 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
     };
   }, [registerDeviceToken, isResettingPassword, isVerifyEmail, isSignUp]);
 
+  // Switch between user and admin (development only)
+  const switchUser = useCallback(
+    async (toAdmin: boolean) => {
+      try {
+        setLoading(true);
+        logger.log('UserContext: Switching user', { toAdmin });
+
+        if (toAdmin) {
+          // Switch to admin
+          const adminUser = createFakeAdminUser();
+          setUser(adminUser);
+          setSession(createFakeSession(adminUser));
+
+          // Fetch admin profile
+          const adminProfile = await fetchProfile(adminUser.id);
+          if (adminProfile) {
+            setProfile(adminProfile);
+          } else {
+            // Fallback fake admin profile
+            const fakeAdminProfile: UserProfile = {
+              id: adminUser.id,
+              first_name: 'Ashton',
+              last_name: 'Sims',
+              date_of_birth: '2005-04-25',
+              team_sort: 'Men',
+              profile_photo_uri:
+                'https://vwqfwehtjnjenzrhzgol.supabase.co/storage/v1/object/public/profiles/f3ee2852-4cf0-45e8-8c71-8480810d45e7/profile_1758885038182.jpg',
+              background_image_uri:
+                'https://vwqfwehtjnjenzrhzgol.supabase.co/storage/v1/object/public/profiles/f3ee2852-4cf0-45e8-8c71-8480810d45e7/background_1759171406997.jpg',
+              is_sporthawk_admin: true,
+              created_at: '2025-08-21T22:58:31.689Z',
+              updated_at: '2025-11-18T17:48:55.318Z',
+            };
+            setProfile(fakeAdminProfile);
+          }
+        } else {
+          // Switch to regular user
+          const regularUser = createFakeUser();
+          setUser(regularUser);
+          setSession(createFakeSession(regularUser));
+
+          // Fetch user profile
+          const userProfile = await fetchProfile(regularUser.id);
+          if (userProfile) {
+            setProfile(userProfile);
+          } else {
+            // Fallback fake user profile
+            const fakeUserProfile: UserProfile = {
+              id: regularUser.id,
+              first_name: 'Dưỡng',
+              last_name: 'Hai',
+              date_of_birth: null,
+              team_sort: null,
+              profile_photo_uri: null,
+              background_image_uri: null,
+              is_sporthawk_admin: false,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            };
+            setProfile(fakeUserProfile);
+          }
+        }
+
+        logger.log('UserContext: User switched successfully', { toAdmin });
+      } catch (error) {
+        logger.error('UserContext: Switch user error:', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchProfile]
+  );
+
+  // Fetch profile for fake user on mount
   useEffect(() => {
     if (!user?.id) return;
     if (isFetchingRef.current) return;
@@ -663,6 +841,26 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
       if (cancelled) return;
       if (profileData) {
         setProfile(profileData);
+      } else {
+        // If profile fetch fails, create fake profile based on user type
+        const isAdmin = user.id === FAKE_ADMIN_ID;
+        const fakeProfile: UserProfile = {
+          id: uid,
+          first_name: isAdmin ? 'Ashton' : 'Dưỡng',
+          last_name: isAdmin ? 'Sims' : 'Hai',
+          date_of_birth: isAdmin ? '2005-04-25' : null,
+          team_sort: isAdmin ? 'Men' : null,
+          profile_photo_uri: isAdmin
+            ? 'https://vwqfwehtjnjenzrhzgol.supabase.co/storage/v1/object/public/profiles/f3ee2852-4cf0-45e8-8c71-8480810d45e7/profile_1758885038182.jpg'
+            : null,
+          background_image_uri: isAdmin
+            ? 'https://vwqfwehtjnjenzrhzgol.supabase.co/storage/v1/object/public/profiles/f3ee2852-4cf0-45e8-8c71-8480810d45e7/background_1759171406997.jpg'
+            : null,
+          is_sporthawk_admin: isAdmin,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        setProfile(fakeProfile);
       }
     })();
     return () => {
@@ -693,6 +891,7 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
       refreshUser,
       updateProfile,
       updatePassword,
+      switchUser,
     }),
     [
       user,
@@ -714,6 +913,7 @@ export function UserProvider({ children }: Readonly<PropsWithChildren>) {
       refreshUser,
       updateProfile,
       updatePassword,
+      switchUser,
     ]
   );
 

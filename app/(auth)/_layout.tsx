@@ -1,59 +1,58 @@
-import { ShText } from '@cmp/ShText';
 import { colorPalette } from '@con/colors';
 import { spacing } from '@con/spacing';
-import { fontSizes, fontWeights, ShTextVariant } from '@con/typography';
+import { fontSizes, fontWeights } from '@con/typography';
 import { useUser } from '@hks/useUser';
 import { ShIcon } from '@top/components';
 import { IconName } from '@top/constants/icons';
-import { Routes } from '@top/constants/routes';
-import { router, Stack, Redirect, useSegments } from 'expo-router';
+import { router, Stack, useSegments } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 export default function AuthLayout() {
   const { user, authChecked } = useUser();
   const segments = useSegments();
 
   // Show loading while checking auth status
-  if (!authChecked) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: colorPalette.baseDark,
-        }}
-      >
-        <ActivityIndicator size="large" color={colorPalette.primaryGold} />
-        <ShText
-          variant={ShTextVariant.Body}
-          style={{
-            marginTop: spacing.md,
-            color: colorPalette.textMid,
-          }}
-        >
-          Loading...
-        </ShText>
-      </View>
-    );
-  }
+  // if (!authChecked) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //         backgroundColor: colorPalette.baseDark,
+  //       }}
+  //     >
+  //       <ActivityIndicator size="large" color={colorPalette.primaryGold} />
+  //       <ShText
+  //         variant={ShTextVariant.Body}
+  //         style={{
+  //           marginTop: spacing.md,
+  //           color: colorPalette.textMid,
+  //         }}
+  //       >
+  //         Loading...
+  //       </ShText>
+  //     </View>
+  //   );
+  // }
 
   // Get current route to check if user is on password reset flow
   const currentRoute = segments[segments.length - 1];
 
   // Allow access to ForgotPassword and ResetPassword for all users
-  const isPasswordResetFlow = currentRoute === 'ForgotPassword' || currentRoute === 'ResetPassword';
+  const isPasswordResetFlow =
+    currentRoute === 'ForgotPassword' || currentRoute === 'ResetPassword';
 
-  if (!isPasswordResetFlow) {
-    if (user && user.email_confirmed_at) {
-      return <Redirect href={Routes.Home} />;
-    }
+  // if (!isPasswordResetFlow) {
+  //   if (user && user.email_confirmed_at) {
+  //     return <Redirect href={Routes.Home} />;
+  //   }
 
-    if (user && !user.email_confirmed_at) {
-      return <Redirect href={Routes.VerifyEmail} />;
-    }
-  }
+  //   if (user && !user.email_confirmed_at) {
+  //     return <Redirect href={Routes.VerifyEmail} />;
+  //   }
+  // }
 
   // Show auth screens for non-authenticated users
   return (

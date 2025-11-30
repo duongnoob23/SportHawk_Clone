@@ -1,7 +1,7 @@
 /**
  * Test Suite: getUpdateEventInvitationHandGestures API với Database Thật
  *
- * ⚠️ QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
+ *  QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
  *
  * Mục đích:
  * - Kiểm tra API hoạt động đúng với database thật
@@ -19,7 +19,7 @@
  * - Sử dụng cleanupEvent() để xóa event và data liên quan (bao gồm event_invitations)
  */
 
-// ✅ QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
+//  QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
 // Sau đó mock @lib/supabase để trả về testSupabase thay vì supabase từ lib
 import {
   cleanupEvent,
@@ -27,14 +27,14 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
-// ✅ Mock @lib/supabase để thay thế supabase bằng testSupabase
+//  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)
 jest.mock('@lib/supabase', () => ({
   supabase: testSupabase,
 }));
 
-// ✅ Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
+//  Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
 jest.unmock('@supabase/supabase-js');
 
 // Import createEvent và getUpdateEventInvitationHandGestures SAU KHI đã mock @lib/supabase
@@ -43,7 +43,7 @@ import {
   getUpdateEventInvitationHandGestures,
 } from '@top/features/event/api/event';
 
-// ✅ Bây giờ createEvent và getUpdateEventInvitationHandGestures sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
+//  Bây giờ createEvent và getUpdateEventInvitationHandGestures sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
 
 describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () => {
   // Test data - sẽ được setup từ database thật
@@ -246,7 +246,7 @@ describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () =>
       });
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -272,7 +272,7 @@ describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () =>
       });
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -311,7 +311,7 @@ describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () =>
       });
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -350,7 +350,7 @@ describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () =>
       });
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -505,7 +505,7 @@ describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () =>
    * Input: eventId và userId có nhiều invitations
    * Expected: Tất cả invitations đều được update
    * 
-   * ⚠️ Lưu ý: Thực tế, với UNIQUE constraint (event_id, user_id), chỉ có 1 invitation cho mỗi cặp (eventId, userId)
+   *  Lưu ý: Thực tế, với UNIQUE constraint (event_id, user_id), chỉ có 1 invitation cho mỗi cặp (eventId, userId)
    * Nhưng test này vẫn có giá trị để đảm bảo API hoạt động đúng
    */
   it('getUpdateEventInvitationHandGestures_WhenMultipleInvitations_UpdatesAll', async () => {

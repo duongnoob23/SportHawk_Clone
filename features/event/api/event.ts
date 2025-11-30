@@ -1,4 +1,4 @@
-import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import { CreateEventData } from '@top/lib/api/events';
 import { EVENT_STATUS_FILTER } from '../constants/eventResponse';
@@ -41,7 +41,11 @@ export async function createEvent(data: CreateEventData, userId: string) {
       type: data.event_type,
     });
 
-    const { data: eventData, error: eventError } = await supabase
+    // Use dev client to bypass RLS in development
+    const { getSupabaseClient } = await import('@lib/supabase-dev');
+    const client = getSupabaseClient();
+
+    const { data: eventData, error: eventError } = await client
       .from('events')
       .insert({
         team_id: data.team_id,
@@ -80,7 +84,7 @@ export async function createEvent(data: CreateEventData, userId: string) {
         notes: data.pre_match_message || null,
       }));
 
-      const { error: participantsError } = await supabase
+      const { error: participantsError } = await client
         .from('event_participants')
         .insert(participants);
 
@@ -99,7 +103,7 @@ export async function createEvent(data: CreateEventData, userId: string) {
         invitation_status: 'pending',
       }));
 
-      const { error: invitationsError } = await supabase
+      const { error: invitationsError } = await client
         .from('event_invitations')
         .insert(invitations);
 
@@ -120,7 +124,7 @@ export async function createEvent(data: CreateEventData, userId: string) {
         invited_at: new Date().toISOString(),
       }));
 
-      const { error: leadersError } = await supabase
+      const { error: leadersError } = await client
         .from('event_participants')
         .insert(leaders);
 
@@ -136,7 +140,7 @@ export async function createEvent(data: CreateEventData, userId: string) {
         invitation_status: 'pending',
       }));
 
-      const { error: leaderInvitationsError } = await supabase
+      const { error: leaderInvitationsError } = await client
         .from('event_invitations')
         .insert(leaderInvitations);
 
@@ -164,11 +168,12 @@ export const getEventDetail = async (
 ): Promise<EventDetailData> => {
   const { eventId, userId, teamId } = payload;
   try {
-    const { data: detailData, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: detailData, error } = await client
       .from('events')
       .select(EVENT_DETAIL_QUERY)
       .eq('id', eventId)
-      .single()
+      .maybeSingle() // Use maybeSingle() to handle no data
       .overrideTypes<EventDetailData>();
 
     if (error) {
@@ -176,12 +181,16 @@ export const getEventDetail = async (
       throw error;
     }
 
-    const { data: teamMembers, error: teamError } = await supabase
+    if (!detailData) {
+      throw new Error(`Event with id ${eventId} not found`);
+    }
+
+    const { data: teamMembers, error: teamError } = await client
       .from('team_members')
       .select('user_id')
       .eq('team_id', teamId)
       .eq('member_status', 'active');
-    const { data: teamLeaders, error: leaderError } = await supabase
+    const { data: teamLeaders, error: leaderError } = await client
       .from('team_admins')
       .select('user_id')
       .eq('team_id', teamId);
@@ -214,8 +223,9 @@ export const getEventDetail = async (
 // ✅
 export const getEventSquad = async (payload: EventSquadData) => {
   try {
+    const client = getSupabaseClient();
     const { eventId } = payload;
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('event_squads')
       .select(
         `
@@ -298,16 +308,17 @@ export const updateEventById = async (
     }
   });
 
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('events')
     .update(payload)
     .eq('id', eventId)
     .select()
-    .single();
+    .maybeSingle(); // Use maybeSingle() to handle no data
 
   const status = 'pending';
 
-  const { data: invitationUpdate, error: updateError } = await supabase
+  const { data: invitationUpdate, error: updateError } = await client
     .from('event_invitations')
     .update({ invitation_status: status })
     .eq('event_id', eventId);
@@ -322,11 +333,11 @@ export const updateEventById = async (
     invitation_status: status,
   }));
 
-  const { data: invitationInsert, error: insertError } = await supabase
+  const { data: invitationInsert, error: insertError } = await client
     .from('event_invitations')
     .insert(insertPayload);
 
-  const { data: invitationDelete, error: deleteError } = await supabase
+  const { data: invitationDelete, error: deleteError } = await client
     .from('event_invitations')
     .delete()
     .in('user_id', removeArray)
@@ -365,8 +376,9 @@ export const getTeamMembersSimple = async (
   payload: TeamMembersSimpleData
 ): Promise<{ memberData: MemberData1[]; userIds: string[] }> => {
   try {
+    const client = getSupabaseClient();
     const { teamId, eventId } = payload;
-    const { data: teamMemberData, error } = await supabase
+    const { data: teamMemberData, error } = await client
       .from('team_members')
       .select(
         `
@@ -387,7 +399,7 @@ export const getTeamMembersSimple = async (
       .eq('member_status', 'active')
       .overrideTypes<MemberData1[]>();
 
-    const { data: userInInvitations } = await supabase
+    const { data: userInInvitations } = await client
       .from('event_invitations')
       .select('*')
       .eq('event_id', eventId);
@@ -413,7 +425,8 @@ export const getTeamAdminsSimple = async (
   eventId: string
 ): Promise<{ leaderData: LeaderData1[]; userIds: string[] }> => {
   try {
-    const { data: teamAdminData, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: teamAdminData, error } = await client
       .from('team_admins')
       .select(
         `
@@ -435,7 +448,7 @@ export const getTeamAdminsSimple = async (
       .order('is_primary', { ascending: false })
       .overrideTypes<LeaderData1[]>();
 
-    const { data: userInInvitations } = await supabase
+    const { data: userInInvitations } = await client
       .from('event_invitations')
       .select('*')
       .eq('event_id', eventId);
@@ -466,7 +479,8 @@ export const getTeamMembersWithTeamId = async (
     if (teamId === 'all') {
       return { memberData: [], userIds: [] };
     }
-    const { data: teamMemberData, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: teamMemberData, error } = await client
       .from('team_members')
       .select(
         `
@@ -508,7 +522,8 @@ export const getTeamLeadersWithTeamId = async (
     if (teamId === 'all') {
       return { leaderData: [], userIds: [] };
     }
-    const { data: teamAdminData, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: teamAdminData, error } = await client
       .from('team_admins')
       .select(
         `
@@ -557,8 +572,9 @@ export const upsertInvitations = async (input: InvitationInput) => {
     removedMembers = [],
   } = input;
 
+  const client = getSupabaseClient();
   if (removedMembers.length > 0) {
-    const { error: deleteError } = await supabase
+    const { error: deleteError } = await client
       .from('event_invitations')
       .delete()
       .eq('event_id', eventId)
@@ -576,7 +592,7 @@ export const upsertInvitations = async (input: InvitationInput) => {
       invited_at: new Date().toISOString(),
     }));
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await client
       .from('event_invitations')
       .insert(invitations);
 
@@ -591,7 +607,8 @@ export const getEventEdit = async (
   eventId: string
 ): Promise<{ editEventData: EditEventType }> => {
   try {
-    const { data: editEventData, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: editEventData, error } = await client
       .from('events')
       .select(
         `
@@ -626,7 +643,7 @@ export const getEventEdit = async (
       `
       )
       .eq('id', eventId)
-      .single()
+      .maybeSingle() // Use maybeSingle() to handle no data
       .overrideTypes<EditEventType>();
 
     if (error) throw error;
@@ -644,8 +661,9 @@ export const getEventEdit = async (
 // ✅
 export const deleteEvent = async (payload: DeleteEventData) => {
   try {
+    const client = getSupabaseClient();
     const status = EVENT_STATUS_FILTER.CANCELLED;
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('events')
       .update({
         event_status: status,
@@ -655,7 +673,7 @@ export const deleteEvent = async (payload: DeleteEventData) => {
       })
       .eq('id', payload.eventId)
       .select()
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data
 
     if (error) throw error;
     if (!data) throw new Error('Event not found');
@@ -672,10 +690,11 @@ export const getUpdateEventInvitationHandGestures = async (
   payload: UpdateEventInvitationHandGesturesType
 ) => {
   try {
+    const client = getSupabaseClient();
     const { eventId, userId, response, teamId, eventFilter } = payload;
     const status = mapRsvpToInvitationStatus(response);
     const { data: updateInvitationsData, error: updateInvitationsError } =
-      await supabase
+      await client
         .from('event_invitations')
         .update({
           invitation_status: status,
@@ -701,8 +720,9 @@ export const getEventInvitationsStatus = async (
 ) => {
   try {
     const { userId, eventId } = payload;
+    const client = getSupabaseClient();
     const { data: invitationsStatusData, error: invitationsStatusError } =
-      await supabase
+      await client
         .from('event_invitations')
         .select(
           `
@@ -736,7 +756,8 @@ export const getEventSquadsSelect = async (
   userId: string
 ): Promise<EventSquadsSelectData> => {
   try {
-    const { data: isSelectedData, error: isSelectedError } = await supabase
+    const client = getSupabaseClient();
+    const { data: isSelectedData, error: isSelectedError } = await client
       .from('event_squads')
       .select(
         `
@@ -755,7 +776,7 @@ export const getEventSquadsSelect = async (
 
     if (isSelectedError) throw isSelectedError;
 
-    const { data: isStatusData, error: isStatusError } = await supabase
+    const { data: isStatusData, error: isStatusError } = await client
       .from('event_invitations')
       .select(
         `
@@ -769,7 +790,7 @@ export const getEventSquadsSelect = async (
       )
       .eq('event_id', eventId)
       .eq('user_id', userId)
-      .single()
+      .maybeSingle() // Use maybeSingle() instead of single() to handle no data (fixes PGRST116)
       .overrideTypes<EventInvitation>();
 
     if (isStatusError) throw isStatusError;
@@ -777,7 +798,7 @@ export const getEventSquadsSelect = async (
     // đảm bảo trả object đúng shape
     return {
       eventSquads: isSelectedData ?? [],
-      eventInvitations: isStatusData,
+      eventInvitations: isStatusData ?? null, // Handle null case from maybeSingle()
     };
   } catch (error) {
     console.error('❌ error in getEventSquadsSelect:', error);
@@ -801,7 +822,8 @@ export const getUpsertEventsquad = async (payload: UpsertEventsquadType) => {
       throw new Error('eventId is required');
     }
 
-    const { data: currentRecords, error: currentError } = await supabase
+    const client = getSupabaseClient();
+    const { data: currentRecords, error: currentError } = await client
       .from('event_squads')
       .select('user_id')
       .eq('event_id', eventId);
@@ -812,7 +834,7 @@ export const getUpsertEventsquad = async (payload: UpsertEventsquadType) => {
 
     let removedCount = 0;
     if (removeMember && removeMember.length > 0) {
-      const { error: deleteError, count } = await supabase
+      const { error: deleteError, count } = await client
         .from('event_squads')
         .delete({ count: 'exact' })
         .eq('event_id', eventId)
@@ -837,7 +859,7 @@ export const getUpsertEventsquad = async (payload: UpsertEventsquadType) => {
           selection_notes: preMatchMessage,
         }));
 
-        const { data: newSquadMembers, error: insertError } = await supabase
+        const { data: newSquadMembers, error: insertError } = await client
           .from('event_squads')
           .insert(squadMembers)
           .select();
@@ -848,7 +870,7 @@ export const getUpsertEventsquad = async (payload: UpsertEventsquadType) => {
       }
     }
 
-    const { data: finalRecords, error: finalError } = await supabase
+    const { data: finalRecords, error: finalError } = await client
       .from('event_squads')
       .select('id')
       .eq('event_id', eventId);
@@ -887,10 +909,11 @@ export type Props = {
 export const getUpdateEventInvitationHandGesture = async (
   payload: UpdateEventInvitationHandGestureType
 ): Promise<Props> => {
+  const client = getSupabaseClient();
   const { id, eventId, userId, response } = payload;
   const status = mapRsvpToInvitationStatus(response);
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('event_invitations')
     .update({ invitation_status: status })
     .match({ id: id })
@@ -912,7 +935,8 @@ export const getDeleteAllEventSquad = async (
     const { eventId, userId, teamId } = payload;
     if (!eventId) throw new Error('Missing eventId in getDeleteAllEventSquad');
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('event_squads')
       .delete()
       .eq('event_id', eventId);

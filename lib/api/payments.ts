@@ -1,5 +1,6 @@
 import { Database } from '@typ/database';
 import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import {
   PaymentHistoryStatusType,
@@ -58,11 +59,12 @@ interface PaymentDetail extends PaymentHistoryItem {
 export const paymentsApi = {
   async getTeamStripeAccount(teamId: string): Promise<StripeAccount | null> {
     try {
-      const { data, error } = await supabase
+      const client = getSupabaseClient();
+      const { data, error } = await client
         .from('stripe_accounts')
         .select('*')
         .eq('team_id', teamId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -83,12 +85,10 @@ export const paymentsApi = {
     data: CreatePaymentRequestData
   ): Promise<PaymentRequest> {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
+      const { getAuthUser } = await import('@lib/utils/get-auth-user');
+      const { getSupabaseClient } = await import('@lib/supabase-dev');
+      const user = await getAuthUser();
+      const client = getSupabaseClient();
 
       logger.log('Creating payment request:', data.title);
 
@@ -106,11 +106,11 @@ export const paymentsApi = {
         total_collected_pence: 0,
       };
 
-      const { data: paymentRequest, error: requestError } = await supabase
+      const { data: paymentRequest, error: requestError } = await client
         .from('payment_requests')
         .insert(paymentRequestInsert)
         .select()
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (requestError) {
         logger.error('Failed to create payment request:', requestError);
@@ -127,7 +127,7 @@ export const paymentsApi = {
         })
       );
 
-      const { error: membersError } = await supabase
+      const { error: membersError } = await client
         .from('payment_request_members')
         .insert(memberInserts);
 
@@ -177,7 +177,8 @@ export const paymentsApi = {
     timeFilter?: TimeFilterType
   ): Promise<PaymentRequestWithMembers[]> {
     try {
-      let query = supabase
+      const client = getSupabaseClient();
+      let query = client
         .from('payment_request_members')
         .select(
           `
@@ -231,7 +232,8 @@ export const paymentsApi = {
     teamId: string
   ): Promise<PaymentRequestWithMembers[]> {
     try {
-      const { data, error } = await supabase
+      const client = getSupabaseClient();
+      const { data, error } = await client
         .from('payment_requests')
         .select(
           `
@@ -258,7 +260,8 @@ export const paymentsApi = {
     paymentRequestId: string
   ): Promise<PaymentRequestWithMembers | null> {
     try {
-      const { data, error } = await supabase
+      const client = getSupabaseClient();
+      const { data, error } = await client
         .from('payment_requests')
         .select(
           `
@@ -275,7 +278,7 @@ export const paymentsApi = {
         `
         )
         .eq('id', paymentRequestId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (error) {
         logger.error('Failed to get payment request details:', error);
@@ -291,7 +294,8 @@ export const paymentsApi = {
 
   async getPaymentDetail(paymentId: string): Promise<any> {
     try {
-      const { data, error } = await supabase
+      const client = getSupabaseClient();
+      const { data, error } = await client
         .from('payment_requests')
         .select(
           `
@@ -310,7 +314,7 @@ export const paymentsApi = {
         `
         )
         .eq('id', paymentId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (error) {
         logger.error('Failed to get payment detail:', error);
@@ -349,14 +353,12 @@ export const paymentsApi = {
 
   async cancelPaymentRequest(paymentRequestId: string): Promise<void> {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
+      const { getAuthUser } = await import('@lib/utils/get-auth-user');
+      const { getSupabaseClient } = await import('@lib/supabase-dev');
+      const user = await getAuthUser();
+      const client = getSupabaseClient();
 
-      const { error } = await supabase
+      const { error } = await client
         .from('payment_requests')
         .update({ request_status: 'cancelled' })
         .eq('id', paymentRequestId)
@@ -411,11 +413,12 @@ export const paymentsApi = {
     failureReason?: string;
   }> {
     try {
-      const { data, error } = await supabase
+      const client = getSupabaseClient();
+      const { data, error } = await client
         .from('payment_request_members')
         .select('payment_status, paid_at, failure_reason')
         .eq('id', paymentRequestMemberId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (error) {
         logger.error('Failed to check payment status:', error);
@@ -452,7 +455,8 @@ export const paymentsApi = {
         updateData.paid_at = new Date().toISOString();
       }
 
-      const { error } = await supabase
+      const client = getSupabaseClient();
+      const { error } = await client
         .from('payment_request_members')
         .update(updateData)
         .eq('id', paymentRequestMemberId);
@@ -473,7 +477,8 @@ export const paymentsApi = {
     try {
       logger.log('[PAY-006] Fetching payment history for user:', userId);
 
-      const { data, error } = await supabase
+      const client = getSupabaseClient();
+      const { data, error } = await client
         .from('payment_request_members')
         .select(
           `
@@ -526,7 +531,8 @@ export const paymentsApi = {
 
   async getPaymentHistoryDetail(paymentId: string): Promise<PaymentDetail> {
     try {
-      const { data, error } = await supabase
+      const client = getSupabaseClient();
+      const { data, error } = await client
         .from('payment_request_members')
         .select(
           `
@@ -553,7 +559,7 @@ export const paymentsApi = {
         `
         )
         .eq('id', paymentId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle no data
 
       if (error) {
         logger.error('[PAY-006] Failed to load payment detail:', error);

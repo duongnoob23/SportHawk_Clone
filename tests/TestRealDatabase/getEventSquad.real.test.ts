@@ -1,7 +1,7 @@
 /**
  * Test Suite: getEventSquad API với Database Thật
  *
- * ⚠️ QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
+ *  QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
  *
  * Mục đích:
  * - Kiểm tra API hoạt động đúng với database thật
@@ -18,14 +18,14 @@
  * - Tất cả test data sẽ được xóa sau mỗi test
  * - Sử dụng cleanupEvent() để xóa event và data liên quan (bao gồm event_squads)
  *
- * ⚠️ VỀ toBeDefined():
+ *  VỀ toBeDefined():
  * - toBeDefined() vẫn bắt được TẤT CẢ các lỗi (error cases)
  * - Chỉ khác là không expect chi tiết error message
  * - Vẫn phát hiện được bugs: nếu expect error mà không có error → fail, nếu expect success mà có error → fail
  * - Đây là cách đúng vì error message có thể thay đổi, nhưng việc có error hay không là quan trọng
  */
 
-// ✅ QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
+//  QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
 // Sau đó mock @lib/supabase để trả về testSupabase thay vì supabase từ lib
 import {
   cleanupEvent,
@@ -33,20 +33,20 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
-// ✅ Mock @lib/supabase để thay thế supabase bằng testSupabase
+//  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)
 jest.mock('@lib/supabase', () => ({
   supabase: testSupabase,
 }));
 
-// ✅ Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
+//  Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
 jest.unmock('@supabase/supabase-js');
 
 // Import createEvent và getEventSquad SAU KHI đã mock @lib/supabase
 import { createEvent, getEventSquad } from '@top/features/event/api/event';
 
-// ✅ Bây giờ createEvent và getEventSquad sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
+//  Bây giờ createEvent và getEventSquad sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
 
 describe('getEventSquad API - Real Database Tests', () => {
   // Test data - sẽ được setup từ database thật
@@ -171,7 +171,7 @@ describe('getEventSquad API - Real Database Tests', () => {
       await getEventSquad(invalidPayload);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -194,7 +194,7 @@ describe('getEventSquad API - Real Database Tests', () => {
       await getEventSquad(invalidPayload);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });

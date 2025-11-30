@@ -17,7 +17,7 @@ import React from 'react';
 import { Image, ImageBackground, StyleSheet, View } from 'react-native';
 
 export default function ProfileScreen() {
-  const { profile } = useUser();
+  const { profile, user, switchUser, loading } = useUser();
 
   const handleEditProfile = () => {
     router.push(Routes.EditProfile);
@@ -26,6 +26,13 @@ export default function ProfileScreen() {
   const handleSettings = () => {
     router.push(Routes.UserSettings);
   };
+
+  const handleSwitchUser = async () => {
+    const isAdmin = user?.id === 'f3ee2852-4cf0-45e8-8c71-8480810d45e7';
+    await switchUser(!isAdmin);
+  };
+
+  const isAdmin = user?.id === 'f3ee2852-4cf0-45e8-8c71-8480810d45e7';
 
   // Default images if none are set
   const backgroundImage = profile?.background_image_uri || null;
@@ -94,6 +101,19 @@ export default function ProfileScreen() {
               style={styles.editButton}
               textStyle={{ fontWeight: '400' }}
             />
+
+            {/* Switch User Button (Development Only) */}
+            {__DEV__ && (
+              <ShButton
+                title={isAdmin ? 'Switch to User' : 'Switch to Admin'}
+                variant={ShButtonVariant.Secondary}
+                onPress={handleSwitchUser}
+                style={[styles.editButton, styles.switchButton]}
+                textStyle={{ fontWeight: '400' }}
+                loading={loading}
+                disabled={loading}
+              />
+            )}
           </View>
         </View>
       </ShScreenContainer>
@@ -160,5 +180,9 @@ const styles = StyleSheet.create({
   editButton: {
     marginTop: spacing.xxl,
     width: '100%',
+  },
+  switchButton: {
+    marginTop: spacing.md,
+    backgroundColor: colorPalette.primaryGold,
   },
 });

@@ -1,4 +1,5 @@
 import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import { MemberData1 } from '@top/features/event/types';
 import { PaymentMemberStatus } from '@top/features/payments/constants/paymentStatus';
@@ -22,7 +23,8 @@ export const getPaymentRequestMemberByPaymentAndUser = async (
   paymentRequestId: string,
   userId: string
 ): Promise<PaymentRequestMemberDBResult | null> => {
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('payment_request_members')
     .select(
       `
@@ -43,7 +45,7 @@ export const getPaymentRequestMemberByPaymentAndUser = async (
     )
     .eq('payment_request_id', paymentRequestId)
     .eq('user_id', userId)
-    .single<PaymentRequestMemberDBResult>();
+    .maybeSingle<PaymentRequestMemberDBResult>(); // Use maybeSingle() to handle no data
 
   if (error) {
     if (error.code === 'PGRST116') {
@@ -73,7 +75,8 @@ export const createPaymentRequestMembers = async (
       })
     );
 
-    const { error: membersError } = await supabase
+    const client = getSupabaseClient();
+    const { error: membersError } = await client
       .from('payment_request_members')
       .insert(memberInserts);
 
@@ -137,7 +140,8 @@ export const updatePaymentRequestMemberStatus = async (
     updateData.paid_at = new Date().toISOString();
   }
 
-  const { error } = await supabase
+  const client = getSupabaseClient();
+  const { error } = await client
     .from('payment_request_members')
     .update(updateData)
     .eq('id', paymentRequestMemberId);
@@ -179,7 +183,8 @@ export const updatePaymentRequestMember = async (
       updateData.paid_at = new Date().toISOString();
     }
 
-    const { data: updatedMember, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: updatedMember, error } = await client
       .from('payment_request_members')
       .update(updateData)
       .eq('id', id)
@@ -199,7 +204,7 @@ export const updatePaymentRequestMember = async (
         updatedAt:updated_at
       `
       )
-      .single<PaymentRequestMemberDBResult>();
+      .maybeSingle<PaymentRequestMemberDBResult>(); // Use maybeSingle() to handle no data
 
     if (error) {
       logger.error('Failed to update payment request member:', error);
@@ -248,7 +253,8 @@ export const updatePaymentRequestMembersByPaymentId = async (
       updateData.paid_at = new Date().toISOString();
     }
 
-    const { error } = await supabase
+    const client = getSupabaseClient();
+    const { error } = await client
       .from('payment_request_members')
       .update(updateData)
       .eq('payment_request_id', paymentRequestId);
@@ -273,7 +279,8 @@ export const getUserPaymentRequestMembers = async (
   teamId?: string
 ): Promise<PaymentRequestMemberDBResult[]> => {
   try {
-    let query = supabase.from('payment_request_members').select(
+    const client = getSupabaseClient();
+    let query = client.from('payment_request_members').select(
       `
         id,
         paymentRequestId:payment_request_id,
@@ -334,7 +341,8 @@ export const getPaymentRequestMemberSimple = async (
 ): Promise<{ memberData: MemberData1[]; userIds: string[] }> => {
   try {
     const { teamId, paymentRequestId } = payload;
-    const { data: teamMemberData, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: teamMemberData, error } = await client
       .from('team_members')
       .select(
         `
@@ -355,7 +363,7 @@ export const getPaymentRequestMemberSimple = async (
       .eq('member_status', 'active')
       .overrideTypes<MemberData1[]>();
 
-    const { data: userPaymemtRequestMember } = await supabase
+    const { data: userPaymemtRequestMember } = await client
       .from('payment_request_members')
       .select('*')
       .eq('payment_request_id', paymentRequestId);

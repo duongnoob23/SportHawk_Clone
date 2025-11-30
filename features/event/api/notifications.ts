@@ -2,7 +2,7 @@ import {
   getNotificationTemplate,
   processNotificationTemplate,
 } from '@top/constants/notificationTemplateApi';
-import { supabase } from '@top/lib/supabase';
+import { getSupabaseClient } from '@top/lib/supabase-dev';
 import { logger } from '@top/lib/utils/logger';
 import {
   DeliveryMethod,
@@ -30,7 +30,8 @@ export const getInsertNotificationTemplate = async (
       variables
     );
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('notifications')
       .insert({
         user_id: userId,
@@ -66,7 +67,7 @@ export const getInsertNotificationTemplate = async (
             expiresAt:expires_at
             `
       )
-      .single<NotificationRecord>();
+      .maybeSingle<NotificationRecord>(); // Use maybeSingle() to handle no data
     if (error) {
       logger.error('Failed to create notification:', error);
       return null;
@@ -105,7 +106,8 @@ export const getEventEditSelectSquadNotification = async (
     variables
   );
 
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('notifications')
     .insert({
       user_id: userId,
@@ -141,7 +143,7 @@ export const getEventEditSelectSquadNotification = async (
             expiresAt:expires_at
             `
     )
-    .single<NotificationRecord>();
+    .maybeSingle<NotificationRecord>(); // Use maybeSingle() to handle no data
   if (error) {
     logger.error('Failed to create notification:', error);
     return null;

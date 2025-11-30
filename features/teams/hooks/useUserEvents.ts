@@ -11,13 +11,15 @@ export function useUserEvents(
   return useQuery<EventInvitation[]>({
     queryKey: ['userEvents', userId, teamId, timeFilter],
     queryFn: async () => {
-      const res = await getUserEvents(
-        teamId as string,
-        userId as string,
-        timeFilter
-      );
+      if (!userId) {
+        console.warn(
+          'useUserEvents: userId is undefined, returning empty array'
+        );
+        return [];
+      }
+      const res = await getUserEvents(teamId, userId, timeFilter);
       return res;
     },
-    enabled: !!userId,
+    enabled: !!userId && userId !== undefined,
   });
 }

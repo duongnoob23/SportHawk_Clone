@@ -526,7 +526,7 @@ export type ProfileDetail = {
 
 export type EventSquadsSelectData = {
   eventSquads: EventSquad[];
-  eventInvitations: EventInvitations;
+  eventInvitations: EventInvitations | null; // Allow null when no invitation found
 };
 
 export type EventSquad = {

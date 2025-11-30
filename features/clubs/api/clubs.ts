@@ -87,8 +87,6 @@ export const getClubs = async (params: GetClubsType) => {
   }
 };
 
-
-
 export const getClubDetails2 = async (clubsId: string) => {
   try {
     const { data: clubDetailsData, error: clubDetailsError } = await supabase
@@ -125,11 +123,18 @@ export const getClubDetails2 = async (clubsId: string) => {
   }
 };
 
-export const getClubDetails = async (clubsId: string):Promise <ClubDetailsResponse | undefined> => {
+export const getClubDetails = async (
+  clubsId: string
+): Promise<ClubDetailsResponse | undefined> => {
   try {
-    const { data: clubDetailsData, error: clubDetailsError } = await supabase
+    // Use dev client to bypass RLS in development
+    const { getSupabaseClient } = await import('@lib/supabase-dev');
+    const client = getSupabaseClient();
+
+    const { data: clubDetailsData, error: clubDetailsError } = await client
       .from('clubs')
-      .select(`
+      .select(
+        `
         id,
         name,
         slug,
@@ -212,8 +217,14 @@ export const getClubDetails = async (clubsId: string):Promise <ClubDetailsRespon
             joinedAt:joined_at,
             jerseyNumber:jersey_number,
             memberStatus:member_status,
-            profiles(
-            *
+            profiles:profiles!team_members_user_id_fkey1(
+              id,
+              firstName:first_name,
+              lastName:last_name,
+              profilePhotoUri:profile_photo_uri,
+              dateOfBirth:date_of_birth,
+              teamSort:team_sort,
+              isSporthawkAdmin:is_sporthawk_admin
             )
           ),
 
@@ -226,9 +237,10 @@ export const getClubDetails = async (clubsId: string):Promise <ClubDetailsRespon
           homeGroundLatitude:home_ground_latitude,
           homeGroundLongitude:home_ground_longitude
         )
-      `)
+      `
+      )
       .eq('id', clubsId)
-    //   .eq('teams.is_active', true)
+      //   .eq('teams.is_active', true)
       .eq('teams.team_members.member_status', 'active')
       .maybeSingle()
       .overrideTypes<ClubDetailsResponse>();
@@ -238,20 +250,19 @@ export const getClubDetails = async (clubsId: string):Promise <ClubDetailsRespon
       throw clubDetailsError;
     }
 
-    if(clubDetailsData){
-        const filterClubDetailsData = clubDetailsData?.teams.filter((item) =>{return item.isActive == true} )
-        return {
-            ...clubDetailsData,
-            teams:filterClubDetailsData,
-        };
-    }else{
-        return undefined;
+    if (clubDetailsData) {
+      const filterClubDetailsData = clubDetailsData?.teams.filter(item => {
+        return item.isActive == true;
+      });
+      return {
+        ...clubDetailsData,
+        teams: filterClubDetailsData,
+      };
+    } else {
+      return undefined;
     }
-
   } catch (error) {
     console.error('Error in get club details api:', error);
     throw error;
   }
 };
-
-

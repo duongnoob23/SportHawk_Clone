@@ -23,7 +23,7 @@ type TabEventProps = {
 
 const TabEvent = ({ selectedTeam }: TabEventProps) => {
   const insets = useSafeAreaInsets();
-  const { user } = useUser();
+  const { user, authChecked } = useUser();
   const {
     currentFilter,
     handleFilterChange,
@@ -48,11 +48,25 @@ const TabEvent = ({ selectedTeam }: TabEventProps) => {
     }
   };
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('TabEvent: User state', {
+      userId: user?.id,
+      authChecked,
+      selectedTeamId: selectedTeam?.id,
+      currentFilter,
+    });
+  }, [user?.id, authChecked, selectedTeam?.id, currentFilter]);
+
   const {
     data: eventsData,
     isLoading: eventsLoading,
     refetch: refetchEventData,
-  } = useUserEvents(selectedTeam?.id, user?.id, currentFilter);
+  } = useUserEvents(
+    selectedTeam?.id === 'all' ? undefined : selectedTeam?.id,
+    user?.id,
+    currentFilter
+  );
 
   const displayBanner = useMemo(() => {
     if (!eventsData) return 0;

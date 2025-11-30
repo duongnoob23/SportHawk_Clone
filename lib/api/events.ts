@@ -9,6 +9,7 @@ import { InvitationStatus } from './../../features/teams/constants/index';
 // Events API - Centralized event management functions
 // All database operations for events and participants
 import { supabase } from '@lib/supabase';
+import { supabaseDev } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import {
   EVENT_STATUS_FILTER,
@@ -19,6 +20,24 @@ import {
   getDateRangeFromFilter,
   TimeFilterType,
 } from '@top/hooks/useTimeFilter';
+
+/**
+ * Get Supabase client for queries
+ * In dev mode, uses supabaseDev (bypasses RLS) if available
+ * Otherwise uses regular supabase client
+ */
+function getSupabaseClient() {
+  if (__DEV__ && supabaseDev) {
+    logger.log('Events API: Using dev client (bypasses RLS)');
+    return supabaseDev;
+  }
+  if (__DEV__ && !supabaseDev) {
+    logger.warn(
+      'Events API: Dev client not available. RLS may block queries. Add EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY to .env'
+    );
+  }
+  return supabase;
+}
 
 export type EventParticipantRow = {
   id: string;
@@ -140,7 +159,8 @@ export async function createEvent(
     });
 
     // Start a transaction by creating the event first
-    const { data: eventData, error: eventError } = await supabase
+    const client = getSupabaseClient();
+    const { data: eventData, error: eventError } = await client
       .from('events')
       .insert({
         team_id: data.team_id,
@@ -177,7 +197,7 @@ export async function createEvent(
         notes: data.pre_match_message || null,
       }));
 
-      const { error: participantsError } = await supabase
+      const { error: participantsError } = await client
         .from('event_participants')
         .insert(participants);
 
@@ -198,7 +218,7 @@ export async function createEvent(
         invitation_status: 'pending',
       }));
 
-      const { error: invitationsError } = await supabase
+      const { error: invitationsError } = await client
         .from('event_invitations')
         .insert(invitations);
 
@@ -220,7 +240,7 @@ export async function createEvent(
         invited_at: new Date().toISOString(),
       }));
 
-      const { error: leadersError } = await supabase
+      const { error: leadersError } = await client
         .from('event_participants')
         .insert(leaders);
 
@@ -237,7 +257,7 @@ export async function createEvent(
         invitation_status: 'pending',
       }));
 
-      const { error: leaderInvitationsError } = await supabase
+      const { error: leaderInvitationsError } = await client
         .from('event_invitations')
         .insert(leaderInvitations);
 
@@ -263,18 +283,85 @@ export async function createEvent(
 
 // Team admin functions moved to teams.ts where they belong
 
+// Get all events for admin (super admin can see all events across teams)
+export async function getAdminEvents(
+  userId?: string,
+  timeFilter?: TimeFilterType
+): Promise<Event[]> {
+  try {
+    logger.log('Events API: Fetching admin events', {
+      user_id: userId,
+      timeFilter: timeFilter,
+    });
+
+    const client = getSupabaseClient();
+
+    let query = client
+      .from('events')
+      .select('*')
+      .order('event_date', { ascending: true })
+      .order('start_time', { ascending: true });
+
+    const dateRange = getDateRangeFromFilter(timeFilter);
+    logger.log('Events API: Date range filter', {
+      timeFilter,
+      dateRange,
+      startDate: dateRange?.startDate?.toISOString(),
+      endDate: dateRange?.endDate?.toISOString(),
+    });
+
+    if (dateRange) {
+      if (dateRange.startDate) {
+        query = query.gte('event_date', dateRange.startDate.toISOString());
+      }
+      if (dateRange.endDate) {
+        query = query.lte('event_date', dateRange.endDate.toISOString());
+      }
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      logger.error('Events API: Error fetching admin events', error);
+      throw error;
+    }
+
+    logger.log('Events API: Admin events fetched', {
+      count: data?.length || 0,
+      events: data?.map(e => ({
+        id: e.id,
+        title: e.title,
+        event_date: e.event_date,
+        team_id: e.team_id,
+      })),
+    });
+    return data || [];
+  } catch (error) {
+    logger.error('Events API: Failed to fetch admin events', error);
+    throw error;
+  }
+}
+
 // Get events for a team
 export async function getTeamEvents(
   teamId: string,
   timeFilter?: TimeFilterType
 ): Promise<Event[]> {
   try {
+    if (!teamId) {
+      logger.warn('Events API: teamId is undefined, returning empty array');
+      return [];
+    }
+
     logger.log('Events API: Fetching team events', {
       team_id: teamId,
       timeFilter: timeFilter,
     });
 
-    let query = supabase
+    // Use appropriate client (dev client bypasses RLS)
+    const client = getSupabaseClient();
+
+    let query = client
       .from('events')
       .select('*')
       .eq('team_id', teamId)
@@ -282,6 +369,13 @@ export async function getTeamEvents(
       .order('start_time', { ascending: true });
 
     const dateRange = getDateRangeFromFilter(timeFilter);
+    logger.log('Events API: Date range filter', {
+      timeFilter,
+      dateRange,
+      startDate: dateRange?.startDate?.toISOString(),
+      endDate: dateRange?.endDate?.toISOString(),
+    });
+
     if (dateRange) {
       if (dateRange.startDate) {
         query = query.gte('event_date', dateRange.startDate.toISOString());
@@ -298,7 +392,14 @@ export async function getTeamEvents(
       throw error;
     }
 
-    logger.log('Events API: Events fetched', { count: data?.length || 0 });
+    logger.log('Events API: Events fetched', {
+      count: data?.length || 0,
+      events: data?.map(e => ({
+        id: e.id,
+        title: e.title,
+        event_date: e.event_date,
+      })),
+    });
     return data || [];
   } catch (error) {
     logger.error('Events API: Failed to fetch events', error);
@@ -315,7 +416,8 @@ export async function getEventParticipants(
       event_id: eventId,
     });
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('event_participants')
       .select(
         `
@@ -352,7 +454,8 @@ export async function updateEvent(
   try {
     logger.log('Events API: Updating event', { event_id: eventId });
 
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('events')
       .update({
         ...updates,
@@ -384,7 +487,8 @@ export async function cancelEvent(
   try {
     logger.log('Events API: Cancelling event', { event_id: eventId });
 
-    const { error } = await supabase
+    const client = getSupabaseClient();
+    const { error } = await client
       .from('events')
       .update({
         event_status: EVENT_STATUS_FILTER.CANCELLED,
@@ -430,7 +534,8 @@ export async function updateInvitationStatus3(
 ): Promise<void> {
   const status = mapRsvpToInvitationStatus(response);
 
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('event_participants')
     .update({
       attendance_status: status,
@@ -452,13 +557,20 @@ export async function getUserEvents(
   filter?: TimeFilterType
 ) {
   try {
+    if (!userId) {
+      logger.warn('Events API: userId is undefined, returning empty array');
+      return [];
+    }
+
     logger.log('Events API: Fetching user events', {
       user_id: userId,
       team_id: teamId,
       filter,
     });
 
-    let query = supabase
+    const client = getSupabaseClient();
+
+    let query = client
       .from('event_invitations')
       .select(
         `
@@ -510,13 +622,17 @@ export async function getUserEvents(
 
     const { data, error } = await query;
 
+    console.log('data', JSON.stringify(data, null, 2));
+    console.log('error', JSON.stringify(error, null, 2));
+
     if (error) {
       logger.error('Events API: Error fetching user events', error);
       throw error;
     }
 
     const eventIds = data?.map(e => e.event_id) || [];
-    const { data: eventSquads } = await supabase
+    const clientForSquads = getSupabaseClient();
+    const { data: eventSquads } = await clientForSquads
       .from('event_squads')
       .select('event_id')
       .in('event_id', eventIds);
@@ -560,9 +676,10 @@ export async function getEventParticipantsWithJoins(
   const userIds = Array.from(new Set(participants.map(p => p.user_id))).filter(
     Boolean
   );
+  const client = getSupabaseClient();
   let profileMap = new Map<string, ParticipantProfile>();
   if (userIds.length > 0) {
-    const { data: profiles, error: pErr } = await supabase
+    const { data: profiles, error: pErr } = await client
       .from('profiles')
       .select('id, first_name, last_name, profile_photo_uri')
       .in('id', userIds);
@@ -579,7 +696,7 @@ export async function getEventParticipantsWithJoins(
   // event (1 id)
   let eventData: ParticipantEvent | null = null;
   {
-    const { data: events, error: eErr } = await supabase
+    const { data: events, error: eErr } = await client
       .from('events')
       .select(
         `
@@ -611,7 +728,8 @@ export async function getEventParticipantsWithJoins(
 export async function getEventParticipantsRaw(
   eventId: string
 ): Promise<EventParticipantRow[]> {
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('event_participants')
     .select('*')
     .eq('event_id', eventId);
@@ -624,7 +742,8 @@ export async function getEventParticipantsRaw(
 }
 
 export async function debugEventParticipantsSchema(eventId: string) {
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('event_invitations')
     .select('*')
     .eq('event_id', eventId);
@@ -649,8 +768,9 @@ export async function getEventResponses3(eventId: string): Promise<{
   try {
     logger.log('Events API: Fetching event responses', { eventId });
 
+    const client = getSupabaseClient();
     // Thay đổi từ event_participants sang event_invitations
-    const { data: participants, error } = await supabase
+    const { data: participants, error } = await client
       .from('event_participants')
       .select(
         `
@@ -673,14 +793,14 @@ export async function getEventResponses3(eventId: string): Promise<{
       throw error;
     }
 
-    // Lấy event location như cũ
-    const { data: eventData } = await supabase
+    // Lấy event location như cũ - handle case no data
+    const { data: eventData, error: eventError } = await client
       .from('events')
       .select(
         'location_latitude, location_longitude, location_address, location_name'
       )
       .eq('id', eventId)
-      .single();
+      .maybeSingle(); // Use maybeSingle() instead of single() to handle no data
 
     const eventLocation: EventLocation | undefined = eventData
       ? {
@@ -698,7 +818,7 @@ export async function getEventResponses3(eventId: string): Promise<{
 
     let profileMap = new Map();
     if (userIds.length > 0) {
-      const { data: profiles, error: pErr } = await supabase
+      const { data: profiles, error: pErr } = await client
         .from('profiles')
         .select(
           'id, first_name, last_name, profile_photo_uri, date_of_birth, team_sort, is_sporthawk_admin'
@@ -761,8 +881,9 @@ export async function getEventDetails(eventId: string): Promise<{
   try {
     logger.log('Events API: Fetching event responses', { eventId });
 
+    const client = getSupabaseClient();
     // Thay đổi từ event_participants sang event_invitations
-    const { data: invitations, error } = await supabase
+    const { data: invitations, error } = await client
       .from('event_invitations')
       .select(
         `
@@ -781,14 +902,14 @@ export async function getEventDetails(eventId: string): Promise<{
       throw error;
     }
 
-    // Lấy event location như cũ
-    const { data: eventData } = await supabase
+    // Lấy event location như cũ - handle case no data
+    const { data: eventData, error: eventError } = await client
       .from('events')
       .select(
         'location_latitude, location_longitude, location_address, location_name'
       )
       .eq('id', eventId)
-      .single();
+      .maybeSingle(); // Use maybeSingle() instead of single() to handle no data
 
     const eventLocation: EventLocation | undefined = eventData
       ? {
@@ -806,7 +927,7 @@ export async function getEventDetails(eventId: string): Promise<{
 
     let profileMap = new Map();
     if (userIds.length > 0) {
-      const { data: profiles, error: pErr } = await supabase
+      const { data: profiles, error: pErr } = await client
         .from('profiles')
         .select(
           'id, first_name, last_name, profile_photo_uri, date_of_birth, team_sort, is_sporthawk_admin'

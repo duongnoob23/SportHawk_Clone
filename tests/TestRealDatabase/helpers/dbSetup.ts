@@ -9,7 +9,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// ✅ Hardcode Supabase credentials từ .env file
+//  Hardcode Supabase credentials từ .env file
 // Không cần đọc từ environment variables nữa
 export const TEST_SUPABASE_URL = 'https://vwqfwehtjnjenzrhzgol.supabase.co';
 export const TEST_SUPABASE_SERVICE_ROLE_KEY =
@@ -52,7 +52,7 @@ export async function cleanupEvent(eventId: string) {
     // 4. Xóa event
     await testSupabase.from('events').delete().eq('id', eventId);
   } catch (error) {
-    console.error('❌ Error cleaning up event:', error);
+    console.error(' Error cleaning up event:', error);
     // Không throw để test vẫn tiếp tục
   }
 }
@@ -88,7 +88,7 @@ export async function findEventByTitleAndTeam(
     }
     return null;
   } catch (error) {
-    console.error('❌ Error finding event:', error);
+    console.error(' Error finding event:', error);
     return null;
   }
 }
@@ -135,7 +135,7 @@ export async function setupTestTeam(
     .single();
 
   if (!clubs) {
-    throw new Error('❌ No club found. Please create a test club first.');
+    throw new Error(' No club found. Please create a test club first.');
   }
 
   const { data: newTeam, error } = await testSupabase
@@ -150,7 +150,7 @@ export async function setupTestTeam(
     .single();
 
   if (error) {
-    throw new Error(`❌ Failed to create test team: ${error.message}`);
+    throw new Error(` Failed to create test team: ${error.message}`);
   }
 
   return newTeam.id;
@@ -190,7 +190,7 @@ export async function setupTestUser(
 
   if (!users) {
     throw new Error(
-      '❌ No user found. Please create a test user first or use existing user.'
+      ' No user found. Please create a test user first or use existing user.'
     );
   }
 
@@ -205,37 +205,27 @@ export async function getExistingTestData(): Promise<{
   teamId: string;
   userId: string;
 }> {
-  // ✅ Sửa: Không dùng .single() vì nó throw error nếu không có data
-  // Thay vào đó dùng .limit(1) và kiểm tra data
-  const { data: teams, error: teamError } = await testSupabase
+  const { data: team } = await testSupabase
     .from('teams')
     .select('id')
-    .limit(1);
+    .limit(1)
+    .single();
 
-  const { data: users, error: userError } = await testSupabase
+  const { data: user } = await testSupabase
     .from('profiles')
     .select('id')
-    .limit(1);
+    .limit(1)
+    .single();
 
-  // Kiểm tra lỗi hoặc không có data
-  if (teamError || !teams || teams.length === 0) {
+  if (!team || !user) {
     throw new Error(
-      '❌ No existing team found in database.\n' +
-        'Please ensure database has at least one team.\n' +
-        `Error: ${teamError?.message || 'No teams found'}`
-    );
-  }
-
-  if (userError || !users || users.length === 0) {
-    throw new Error(
-      '❌ No existing user found in database.\n' +
-        'Please ensure database has at least one user.\n' +
-        `Error: ${userError?.message || 'No users found'}`
+      ' No existing team or user found in database.\n' +
+        'Please ensure database has at least one team and one user.'
     );
   }
 
   return {
-    teamId: teams[0].id,
-    userId: users[0].id,
+    teamId: team.id,
+    userId: user.id,
   };
 }

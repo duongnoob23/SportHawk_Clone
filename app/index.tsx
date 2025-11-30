@@ -1,7 +1,6 @@
 import { Routes } from '@con/routes';
-import { useUser } from '@hks/useUser';
-import { router, Redirect } from 'expo-router';
-import React from 'react';
+import { router } from 'expo-router';
+import React, { useEffect } from 'react';
 
 import {
   ShButton,
@@ -17,32 +16,48 @@ import { ShButtonVariant } from '@con/buttons';
 import { colorPalette } from '@con/colors';
 import { spacing } from '@con/spacing';
 import { ShTextVariant } from '@con/typography';
-import { ActivityIndicator, View } from 'react-native';
+import { useUser } from '@hks/useUser';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function WelcomeScreen() {
   const { user, authChecked } = useUser();
   const insets = useSafeAreaInsets();
 
-  if (!authChecked) {
-    return (
-      <ShScreenContainer>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={colorPalette.primaryGold} />
-        </View>
-      </ShScreenContainer>
-    );
-  }
+  // Auto redirect to Home if fake user is set (development mode)
+  useEffect(() => {
+    if (__DEV__ && authChecked && user) {
+      // Small delay to ensure navigation is ready
+      const timer = setTimeout(() => {
+        router.replace(Routes.Home);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [user, authChecked]);
 
-  if (user) {
-    return <Redirect href={Routes.Home} />;
-  }
+  // const { data: teamsData, isLoading } = useUserTeams();
+  // console.log('JSON', JSON.stringify(teamsData, null, 2));
+
+  // if (!authChecked) {
+  //   return (
+  //     <ShScreenContainer>
+  //       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //         <ActivityIndicator size="large" color={colorPalette.primaryGold} />
+  //       </View>
+  //     </ShScreenContainer>
+  //   );
+  // }
+
+  // if (user) {
+  //   return <Redirect href={Routes.Home} />;
+  // }
 
   const handleGetStarted = () => {
     router.push(Routes.SignUp);
   };
 
   const handleAlreadyHaveAccount = () => {
+    // router.push(Routes.Home);
     router.push(Routes.SignIn);
   };
 

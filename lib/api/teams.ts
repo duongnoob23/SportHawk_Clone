@@ -762,10 +762,8 @@ export const teamsApi = {
   },
 
   async getUserTeams() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+    const { getAuthUser } = await import('@lib/utils/get-auth-user');
+    const user = await getAuthUser();
 
     // Query 1: Get teams where user is an admin
     const { data: adminTeams, error: adminError } = await supabase
@@ -2031,7 +2029,7 @@ export const teamsApi = {
         .eq('team_id', teamId);
 
       if (membersError) {
-        console.error("Error in search non member",membersError);
+        console.error('Error in search non member', membersError);
         throw membersError;
       }
       const memberIds = teamMembers?.map(member => member.user_id) ?? [];

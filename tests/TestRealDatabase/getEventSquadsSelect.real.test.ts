@@ -1,7 +1,7 @@
 /**
  * Test Suite: getEventSquadsSelect API với Database Thật
  *
- * ⚠️ QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
+ *  QUAN TRỌNG: Test này sử dụng DATABASE THẬT, không phải mock!
  *
  * Mục đích:
  * - Kiểm tra API hoạt động đúng với database thật
@@ -19,7 +19,7 @@
  * - Sử dụng cleanupEvent() để xóa event và data liên quan (bao gồm event_squads và event_invitations)
  */
 
-// ✅ QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
+//  QUAN TRỌNG: Import dbSetup TRƯỚC để có testSupabase
 // Sau đó mock @lib/supabase để trả về testSupabase thay vì supabase từ lib
 import {
   cleanupEvent,
@@ -27,14 +27,14 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
-// ✅ Mock @lib/supabase để thay thế supabase bằng testSupabase
+//  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)
 jest.mock('@lib/supabase', () => ({
   supabase: testSupabase,
 }));
 
-// ✅ Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
+//  Unmock @supabase/supabase-js để dùng Supabase thật (không phải mock)
 jest.unmock('@supabase/supabase-js');
 
 // Import createEvent và getEventSquadsSelect SAU KHI đã mock @lib/supabase
@@ -43,7 +43,7 @@ import {
   getEventSquadsSelect,
 } from '@top/features/event/api/event';
 
-// ✅ Bây giờ createEvent và getEventSquadsSelect sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
+//  Bây giờ createEvent và getEventSquadsSelect sẽ dùng testSupabase (database thật) thay vì supabase từ lib!
 
 describe('getEventSquadsSelect API - Real Database Tests', () => {
   // Test data - sẽ được setup từ database thật
@@ -208,7 +208,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(eventId, testUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -229,7 +229,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(invalidEventId, testUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -250,7 +250,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(invalidEventId, testUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -284,7 +284,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(eventId, invalidUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -318,7 +318,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(eventId, invalidUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -339,7 +339,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(nonExistentEventId, testUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -373,7 +373,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(eventId, nonExistentUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -458,7 +458,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
    * Input: eventId và userId hợp lệ, event có nhiều squads với các users khác nhau
    * Expected: Trả về mảng với tất cả squads
    *
-   * ⚠️ Lưu ý: event_squads có UNIQUE constraint trên (event_id, user_id)
+   *  Lưu ý: event_squads có UNIQUE constraint trên (event_id, user_id)
    * Nên không thể có 2 squad entries cho cùng event và user
    * Test này sẽ lấy thêm 1 user khác từ database để tạo 2 squads
    */
@@ -675,7 +675,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
    * Input: eventId không hợp lệ (sẽ gây lỗi ở squads query)
    * Expected: Throw error (không phải success)
    *
-   * ⚠️ Lưu ý: Test này có thể throw error ở squads query hoặc invitations query
+   *  Lưu ý: Test này có thể throw error ở squads query hoặc invitations query
    */
   it('getEventSquadsSelect_WhenSquadsQueryFails_ThrowsError', async () => {
     // Arrange: Chuẩn bị input với eventId không hợp lệ
@@ -687,7 +687,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(invalidEventId, testUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -734,7 +734,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
       await getEventSquadsSelect(eventId, invalidUserId);
       throw new Error('Expected error to be thrown');
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -746,7 +746,7 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
    * Input: Cố gắng insert 2 squad members với cùng (event_id, user_id)
    * Expected: Throw error từ database (UNIQUE constraint violation)
    *
-   * ⚠️ Lưu ý: Test này kiểm tra database constraint, không phải API logic
+   *  Lưu ý: Test này kiểm tra database constraint, không phải API logic
    */
   it('getEventSquadsSelect_WhenDuplicateSquadMember_ThrowsError', async () => {
     // Arrange: Tạo event trước
@@ -793,16 +793,16 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
         .insert(squadMember2);
 
       if (error) {
-        // ✅ Có error là đúng (UNIQUE constraint violation)
+        //  Có error là đúng (UNIQUE constraint violation)
         expect(error).toBeDefined();
       } else {
-        // ❌ Nếu không có error, đây là bug (database không enforce constraint)
+        //  Nếu không có error, đây là bug (database không enforce constraint)
         throw new Error(
           'Expected error to be thrown for duplicate squad member'
         );
       }
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -846,14 +846,14 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
         .insert(invalidSquadMember);
 
       if (error) {
-        // ✅ Có error là đúng (foreign key violation)
+        //  Có error là đúng (foreign key violation)
         expect(error).toBeDefined();
       } else {
-        // ❌ Nếu không có error, đây là bug (database không enforce foreign key)
+        //  Nếu không có error, đây là bug (database không enforce foreign key)
         throw new Error('Expected error to be thrown for invalid user_id');
       }
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -887,14 +887,14 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
         .insert(invalidSquadMember);
 
       if (error) {
-        // ✅ Có error là đúng (foreign key violation)
+        //  Có error là đúng (foreign key violation)
         expect(error).toBeDefined();
       } else {
-        // ❌ Nếu không có error, đây là bug (database không enforce foreign key)
+        //  Nếu không có error, đây là bug (database không enforce foreign key)
         throw new Error('Expected error to be thrown for invalid event_id');
       }
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });
@@ -938,14 +938,14 @@ describe('getEventSquadsSelect API - Real Database Tests', () => {
         .insert(invalidSquadMember);
 
       if (error) {
-        // ✅ Có error là đúng (NOT NULL constraint violation)
+        //  Có error là đúng (NOT NULL constraint violation)
         expect(error).toBeDefined();
       } else {
-        // ❌ Nếu không có error, đây là bug (database không enforce NOT NULL)
+        //  Nếu không có error, đây là bug (database không enforce NOT NULL)
         throw new Error('Expected error to be thrown for null required field');
       }
     } catch (error: any) {
-      // ✅ Chỉ cần kiểm tra có error là đủ (không phải success)
+      //  Chỉ cần kiểm tra có error là đủ (không phải success)
       expect(error).toBeDefined();
     }
   });

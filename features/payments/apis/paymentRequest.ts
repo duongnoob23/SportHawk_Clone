@@ -1,4 +1,5 @@
 import { supabase } from '@lib/supabase';
+import { getSupabaseClient } from '@lib/supabase-dev';
 import { logger } from '@lib/utils/logger';
 import { PaymentRequestStatus } from '@top/features/payments/constants/paymentStatus';
 import {
@@ -17,7 +18,8 @@ type PaymentRequestUpdate =
 export const getPaymentRequestById = async (
   id: string
 ): Promise<PaymentRequestDBResult> => {
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from('payment_requests')
     .select(
       `
@@ -50,7 +52,7 @@ export const getPaymentRequestById = async (
         `
     )
     .eq('id', id)
-    .single<PaymentRequestDBResult>();
+    .maybeSingle<PaymentRequestDBResult>(); // Use maybeSingle() to handle no data
 
   if (error) {
     logger.error('Failed to get payment detail:', error);
@@ -61,7 +63,8 @@ export const getPaymentRequestById = async (
 
 export const getPaymentRequestsWithMembers = async (paymentId: string) => {
   try {
-    const { data, error } = await supabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from('payment_requests')
       .select(
         `
@@ -114,7 +117,7 @@ export const getPaymentRequestsWithMembers = async (paymentId: string) => {
         `
       )
       .eq('id', paymentId)
-      .single<PaymentRequestDBResult>();
+      .maybeSingle<PaymentRequestDBResult>(); // Use maybeSingle() to handle no data
 
     if (error) {
       throw error;
@@ -139,6 +142,7 @@ export const createPaymentRequest = async (
 
     logger.log('Creating payment request:', data.title);
 
+    const client = getSupabaseClient();
     const paymentRequestInsert: PaymentRequestInsert = {
       team_id: data.teamId,
       created_by: user.id,
@@ -153,11 +157,11 @@ export const createPaymentRequest = async (
       total_collected_pence: 0,
     };
 
-    const { data: paymentRequest, error: requestError } = await supabase
+    const { data: paymentRequest, error: requestError } = await client
       .from('payment_requests')
       .insert(paymentRequestInsert)
       .select()
-      .single();
+      .maybeSingle(); // Use maybeSingle() to handle no data
 
     if (requestError) {
       logger.error('Failed to create payment request:', requestError);
@@ -193,7 +197,8 @@ export const updatePaymentRequest = async (
     if (data.paymentType !== undefined)
       updateData.payment_type = data.paymentType;
 
-    const { data: updatedPayment, error } = await supabase
+    const client = getSupabaseClient();
+    const { data: updatedPayment, error } = await client
       .from('payment_requests')
       .update(updateData)
       .eq('id', id)
@@ -227,7 +232,7 @@ export const updatePaymentRequest = async (
           )
         `
       )
-      .single<PaymentRequestDBResult>();
+      .maybeSingle<PaymentRequestDBResult>(); // Use maybeSingle() to handle no data
 
     if (error) {
       logger.error('Failed to update payment request:', error);
@@ -244,8 +249,9 @@ export const updatePaymentRequest = async (
 
 export const getTeamPaymentRequests =async (teamId:string) => {
   try {
+        const client = getSupabaseClient();
         // Fetch payment requests with member counts
-        const { data, error } = await supabase
+        const { data, error } = await client
           .from('payment_requests')
           .select(
             `
