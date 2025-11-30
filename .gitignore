@@ -32,6 +32,9 @@ yarn-error.*
 
 
 # Secrets and credentials
+.env
+.env.local
+.env.*.local
 supabase/functions/service-account.json
 **/service-account.json
 **/*.key
@@ -42,6 +45,3 @@ supabase/functions/service-account.json
 
 android
 ios
-
-
-.env.*
