@@ -33,7 +33,7 @@ export default function EventMap({ detailDataFix }: Props) {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={openInMaps}
+      // onPress={openInMaps}
       style={styles.mapContainer}
     >
       <MapView

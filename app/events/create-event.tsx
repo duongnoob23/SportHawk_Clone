@@ -385,9 +385,9 @@ export default function CreateEventScreen() {
     const newErrors: Record<string, string> = {};
     const eventType = formData.eventType;
 
-    // if (!formData.location?.trim()) {
-    //   newErrors.location = 'Location is required';
-    // }
+    if (!formData.location?.trim()) {
+      newErrors.location = 'Location is required';
+    }
     if (
       !formData.invitationMembers ||
       formData.invitationMembers.length === 0

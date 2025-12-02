@@ -78,6 +78,8 @@ export default function EventDetailsScreen() {
     userId,
     teamId,
   });
+  console.log('JSON', JSON.stringify(detailDataFix, null, 2));
+
 
   const { data: squadMembers = [], isLoading: squadMembersLoading } =
     useEventSquad({ eventId });

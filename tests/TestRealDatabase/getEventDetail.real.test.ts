@@ -27,6 +27,10 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
+// Định nghĩa __DEV__ cho Jest (React Native global variable)
+// @ts-ignore - __DEV__ is declared in types/jest.d.ts
+global.__DEV__ = true;
+
 //  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)

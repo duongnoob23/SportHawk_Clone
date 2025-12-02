@@ -182,6 +182,8 @@ export default function EditSelectSquadScreen() {
             const startTime = formatEventTime(eventData.startTime);
             const eventTitle = getEventTitle(eventData);
 
+            console.log('JSON-E-SQUAD', JSON.stringify(memberIds, null, 2));
+
             memberIds?.map(item => {
               sendEditSelectSquadNoti({
                 userId: item,

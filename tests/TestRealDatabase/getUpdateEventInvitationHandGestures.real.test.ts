@@ -27,6 +27,10 @@ import {
   testSupabase,
 } from './helpers/dbSetup';
 
+// Định nghĩa __DEV__ cho Jest (React Native global variable)
+// @ts-ignore - __DEV__ is declared in types/jest.d.ts
+global.__DEV__ = true;
+
 //  Mock @lib/supabase để thay thế supabase bằng testSupabase
 // Vì lib/supabase.ts cần EXPO_PUBLIC_SUPABASE_URL mà test không có
 // Nên chúng ta mock nó và dùng testSupabase từ dbSetup (đã có credentials)
@@ -504,7 +508,7 @@ describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () =>
    * Mục tiêu: Kiểm tra API update tất cả invitations match với eventId và userId
    * Input: eventId và userId có nhiều invitations
    * Expected: Tất cả invitations đều được update
-   * 
+   *
    *  Lưu ý: Thực tế, với UNIQUE constraint (event_id, user_id), chỉ có 1 invitation cho mỗi cặp (eventId, userId)
    * Nhưng test này vẫn có giá trị để đảm bảo API hoạt động đúng
    */
@@ -588,4 +592,3 @@ describe('getUpdateEventInvitationHandGestures API - Real Database Tests', () =>
     }
   });
 });
-
